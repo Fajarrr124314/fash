@@ -242,9 +242,9 @@ new class extends Component
                        style="width: 148mm; height: 105mm;">
                        
                        <!-- Header Banner -->
-                       <div class="header-banner-a5">
-                           <span>{{ $activePreviewPop['header_text'] ?: 'HARGA SPESIAL' }}</span>
-                       </div>
+                        <div class="header-banner-a5" style="background-color:#dc2626;color:white;text-align:center;text-transform:uppercase;display:flex;align-items:center;justify-content:center;margin:12px 12px 0 12px;height:75px;box-sizing:border-box;padding:0 10px;">
+                            <span style="font-size:40pt;font-weight:700;line-height:1;letter-spacing:-0.5px;color:white;">{{ $activePreviewPop['header_text'] ?: 'HARGA SPESIAL' }}</span>
+                        </div>
 
                        <!-- Content Body -->
                        <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
@@ -271,7 +271,7 @@ new class extends Component
                                </div>
                            </div>
                         <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                        <div style="text-align:center; padding-bottom: 5px; padding-top: 10px; line-height:0;">
                             <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                         </div>
                            <div class="h-2"></div>
@@ -367,8 +367,8 @@ window.printA5SinglePrice = function() {
                     </div>
 
                     <!-- Footer Image -->
-                    <div style="text-align:center;padding-bottom:8px;padding-top:2px;line-height:0;">
-                        <img src="{{ asset('images/Picture2.bmp') }}" alt="" style="max-height:16px;width:auto;display:inline-block;object-fit:contain;">
+                    <div style="text-align:center;padding-bottom:8px;padding-top:5px;line-height:0;">
+                        <img src="{{ asset('images/Picture2.bmp') }}" alt="" style="max-height:18px;width:auto;display:inline-block;object-fit:contain;">
                     </div>
                 </div>
             @endforeach

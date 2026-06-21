@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Models\Pop;
 use Livewire\Component;
@@ -137,13 +137,15 @@ new class extends Component
             justify-content: center;
             margin: 12px 12px 0 12px;
             border-radius: 0px;
-            height: 60px;
+            height: 75px;
             box-sizing: border-box;
             padding: 0 10px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         
         .pop-card-a5 .header-banner-a5 span {
-            font-size: 46pt !important;
+            font-size: 40pt !important;
             font-weight: 700 !important;
             line-height: 1;
             letter-spacing: -0.5px;
@@ -229,10 +231,10 @@ new class extends Component
                   <div class="pop-card-preview bg-white shadow-lg border border-slate-300 relative transition-all duration-300 flex flex-col justify-between overflow-hidden pop-card-a5"
                        style="width: 148mm; height: 105mm;">
                        
-                       <!-- Header Banner -->
-                       <div class="header-banner-a5">
-                           <span>{{ $activePreviewPop['header_text'] ?: 'DISKON' }}</span>
-                       </div>
+                        <!-- Header Banner -->
+                         <div class="header-banner-a5" style="background-color:#dc2626;color:white;text-align:center;text-transform:uppercase;display:flex;align-items:center;justify-content:center;margin:12px 12px 0 12px;height:75px;min-height:75px;flex-shrink:0;box-sizing:border-box;padding:0 10px;">
+                             <span style="font-size:40pt;font-weight:700;line-height:1;letter-spacing:-0.5px;color:white;font-family:'Arial Narrow',Arial,sans-serif;">{{ $activePreviewPop['header_text'] ?: 'DISKON' }}</span>
+                         </div>
 
                        <!-- Content Body -->
                        <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
