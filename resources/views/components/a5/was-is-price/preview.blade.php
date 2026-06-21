@@ -264,10 +264,57 @@ new class extends Component
                 page-break-inside: avoid;
             }
         }
+     
+        /* ---- Mobile Responsive Preview ---- */
+        .preview-modal-dialog {
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .preview-scroll-area {
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .pop-card-preview-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 8px;
+        }
+        /* Scale the preview card to fit small screens */
+        @media (max-width: 640px) {
+            .pop-card-preview {
+                transform-origin: top center;
+                transform: scale(0.45);
+                margin-bottom: calc((105mm * -0.55)) !important;
+            }
+            .pop-card-preview.is-a4 {
+                transform: scale(0.32);
+                margin-bottom: calc((210mm * -0.68)) !important;
+            }
+            .preview-scroll-area {
+                min-height: 130px;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 900px) {
+            .pop-card-preview {
+                transform-origin: top center;
+                transform: scale(0.62);
+                margin-bottom: calc((105mm * -0.38)) !important;
+            }
+            .pop-card-preview.is-a4 {
+                transform: scale(0.45);
+                margin-bottom: calc((210mm * -0.55)) !important;
+            }
+            .preview-scroll-area {
+                min-height: 200px;
+            }
+        }
+        /* ---- End Mobile Responsive Preview ---- */
      </style>
 
      <!-- Preview Modal Dialog Card -->
-     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-4xl w-full flex flex-col p-6 space-y-6"
+     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-4xl w-full flex flex-col p-4 sm:p-6 space-y-4 sm:space-y-6 preview-modal-dialog"
           @click.away="open = false">
           
           <!-- Modal Header -->
@@ -284,7 +331,7 @@ new class extends Component
           </div>
 
           <!-- Modal Content -->
-          <div class="flex justify-center items-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 overflow-auto max-h-[420px]">
+          <div class="flex justify-center items-start py-4 sm:py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 preview-scroll-area" style="min-height:140px;">
               @if($activePreviewPop)
                   <div class="pop-card-preview bg-white shadow-lg border border-slate-300 relative transition-all duration-300 flex flex-col justify-between overflow-hidden pop-card-a5"
                        style="width: 148mm; height: 105mm;">
@@ -311,25 +358,36 @@ new class extends Component
                                 @php
                                     $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                     $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
+                                    $hasStarting = !empty($activePreviewPop['show_starting_from']);
+                                    // Compact sizes when Mulai Dari is active
+                                    $wasBase  = $hasStarting ? '56pt' : '72pt';
+                                    $wasSuffix = $hasStarting ? '28pt' : '36pt';
+                                    $wasRp    = $hasStarting ? '14pt' : '18pt';
+                                    $wasTop   = $hasStarting ? '6px'  : '8px';
+                                    $promoBase   = $hasStarting ? '75pt' : '96pt';
+                                    $promoSuffix = $hasStarting ? '40pt' : '56pt';
+                                    $promoRp     = $hasStarting ? '16pt' : '20pt';
+                                    $promoTop    = $hasStarting ? '6px'  : '8px';
+                                    $promoMt     = $hasStarting ? '2px'  : '4px';
                                 @endphp
                                 <div style="display:flex;flex-direction:column;align-items:center;">
-                                    @if(!empty($activePreviewPop['show_starting_from']))
-                                        <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:4px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                    @if($hasStarting)
+                                        <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:3px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
                                     @endif
                                     <!-- Was Price (Harga Coret) -->
                                     <div style="display:flex;align-items:flex-start;position:relative;">
-                                        <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <span style="font-size:{{ $wasRp }};font-weight:400;color:#000;margin-top:{{ $wasTop }};margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                         <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
-                                            <span style="font-size:72pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
-                                            <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
+                                            <span style="font-size:{{ $wasBase }};font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
+                                            <span style="font-size:{{ $wasSuffix }};font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
                                         </div>
                                     </div>
                                     <!-- Promo Price (Harga Baru) -->
-                                    <div style="display:flex;align-items:flex-start;margin-top:4px;">
-                                        <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                    <div style="display:flex;align-items:flex-start;margin-top:{{ $promoMt }};">
+                                        <span style="font-size:{{ $promoRp }};font-weight:400;color:#000;margin-top:{{ $promoTop }};margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                         <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
-                                            <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
-                                            <span style="font-size:56pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
+                                            <span style="font-size:{{ $promoBase }};font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
+                                            <span style="font-size:{{ $promoSuffix }};font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -426,24 +484,36 @@ window.printA5WasIsPrice = function() {
 
                         <!-- Price Area -->
                         <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;">
+                            @php
+                                $pqHasStarting = !empty($pq['show_starting_from']);
+                                $pqWasBase   = $pqHasStarting ? '56pt' : '72pt';
+                                $pqWasSuffix = $pqHasStarting ? '28pt' : '36pt';
+                                $pqWasRp     = $pqHasStarting ? '14pt' : '18pt';
+                                $pqWasTop    = $pqHasStarting ? '6px'  : '8px';
+                                $pqPromoBase   = $pqHasStarting ? '75pt' : '96pt';
+                                $pqPromoSuffix = $pqHasStarting ? '40pt' : '56pt';
+                                $pqPromoRp     = $pqHasStarting ? '16pt' : '20pt';
+                                $pqPromoTop    = $pqHasStarting ? '6px'  : '8px';
+                                $pqPromoMt     = $pqHasStarting ? '2px'  : '4px';
+                            @endphp
                             <div style="display:flex;flex-direction:column;align-items:center;">
-                                @if(!empty($pq['show_starting_from']))
-                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:4px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                @if($pqHasStarting)
+                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:3px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
                                 @endif
                                 <!-- Was Price (Harga Coret) -->
                                 <div style="display:flex;align-items:flex-start;position:relative;">
-                                    <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                    <span style="font-size:{{ $pqWasRp }};font-weight:400;color:#000;margin-top:{{ $pqWasTop }};margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                     <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
-                                        <span style="font-size:72pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
-                                        <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
+                                        <span style="font-size:{{ $pqWasBase }};font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
+                                        <span style="font-size:{{ $pqWasSuffix }};font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
                                     </div>
                                 </div>
                                 <!-- Promo Price (Harga Baru) -->
-                                <div style="display:flex;align-items:flex-start;margin-top:4px;">
-                                    <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                <div style="display:flex;align-items:flex-start;margin-top:{{ $pqPromoMt }};">
+                                    <span style="font-size:{{ $pqPromoRp }};font-weight:400;color:#000;margin-top:{{ $pqPromoTop }};margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                     <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
-                                        <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
-                                        <span style="font-size:56pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
+                                        <span style="font-size:{{ $pqPromoBase }};font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
+                                        <span style="font-size:{{ $pqPromoSuffix }};font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
                                     </div>
                                 </div>
                             </div>

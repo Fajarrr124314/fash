@@ -207,10 +207,57 @@ new class extends Component
                 page-break-inside: avoid;
             }
         }
+     
+        /* ---- Mobile Responsive Preview ---- */
+        .preview-modal-dialog {
+            max-height: 92vh;
+            overflow-y: auto;
+        }
+        .preview-scroll-area {
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .pop-card-preview-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 8px;
+        }
+        /* Scale the preview card to fit small screens */
+        @media (max-width: 640px) {
+            .pop-card-preview {
+                transform-origin: top center;
+                transform: scale(0.45);
+                margin-bottom: calc((105mm * -0.55)) !important;
+            }
+            .pop-card-preview.is-a4 {
+                transform: scale(0.32);
+                margin-bottom: calc((210mm * -0.68)) !important;
+            }
+            .preview-scroll-area {
+                min-height: 130px;
+            }
+        }
+        @media (min-width: 641px) and (max-width: 900px) {
+            .pop-card-preview {
+                transform-origin: top center;
+                transform: scale(0.62);
+                margin-bottom: calc((105mm * -0.38)) !important;
+            }
+            .pop-card-preview.is-a4 {
+                transform: scale(0.45);
+                margin-bottom: calc((210mm * -0.55)) !important;
+            }
+            .preview-scroll-area {
+                min-height: 200px;
+            }
+        }
+        /* ---- End Mobile Responsive Preview ---- */
      </style>
 
      <!-- Preview Modal Dialog Card -->
-     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-4xl w-full flex flex-col p-6 space-y-6"
+     <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-4xl w-full flex flex-col p-4 sm:p-6 space-y-4 sm:space-y-6 preview-modal-dialog"
           @click.away="open = false">
           
           <!-- Modal Header -->
@@ -227,7 +274,7 @@ new class extends Component
           </div>
 
           <!-- Modal Content -->
-          <div class="flex justify-center items-center py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 overflow-auto max-h-[420px]">
+          <div class="flex justify-center items-start py-4 sm:py-6 bg-slate-50 rounded-xl border border-dashed border-slate-200 preview-scroll-area" style="min-height:140px;">
               @if($activePreviewPop)
                   <div class="pop-card-preview bg-white shadow-lg border border-slate-300 relative transition-all duration-300 flex flex-col justify-between overflow-hidden pop-card-a5"
                        style="width: 148mm; height: 105mm;">
