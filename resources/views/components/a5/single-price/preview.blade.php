@@ -20,7 +20,9 @@ new class extends Component
         $pop = Pop::find($id);
         if ($pop && $pop->frame_size === 'A5' && $pop->layout_type === 'single_price') {
             $this->activePreviewPop = $pop->toArray();
-            $this->previewQueue = [$this->activePreviewPop];
+            // Isi queue sesuai qty_print agar layout 4-up bekerja
+            $qty = max(1, (int)($pop->qty_print ?? 1));
+            $this->previewQueue = array_fill(0, $qty, $this->activePreviewPop);
             $this->frameSize = $pop->frame_size;
             $this->showModal = true;
         }
@@ -76,7 +78,7 @@ new class extends Component
      style="display: none;"
      x-transition>
      
-     <style x-text="'@media print { @page { size: 148mm 105mm landscape; margin: 0; } }'"></style>
+     {{-- page size is now set in the dedicated print style block below the modal --}}
      
      <style>
         .pop-card-preview, .pop-card-preview * {
@@ -110,6 +112,8 @@ new class extends Component
             background-color: white !important;
             color: black !important;
             overflow: hidden;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         
         .pop-card-a5 .header-banner-a5 {
@@ -125,6 +129,8 @@ new class extends Component
             height: 75px;
             box-sizing: border-box;
             padding: 0 10px;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
         }
         
         .pop-card-a5 .header-banner-a5 span {
@@ -149,7 +155,7 @@ new class extends Component
             font-size: 18pt !important;
             font-weight: 400 !important;
             text-transform: uppercase;
-            color: #334155 !important;
+            color: #000000ff !important;
             line-height: 1.2;
             margin-top: -5px;
             text-align: center;
@@ -162,6 +168,7 @@ new class extends Component
             flex-grow: 1;
             margin-top: 10px;
             margin-bottom: -10px;
+            margin-top:-20px;
         }
         
         .pop-card-a5 .price-wrapper-a5 {
@@ -170,13 +177,14 @@ new class extends Component
             color: #dc2626 !important;
             font-weight: 700 !important;
             line-height: 0.85;
+            margin-top:-20px;
         }
         
         .pop-card-a5 .price-rp-a5 {
             font-size: 20pt !important;
             font-weight: 400 !important;
             color: #000000ff !important;
-            margin-top: 6px;
+            margin-top: 0px;
             margin-right: 2px;
             line-height: 1;
         }
@@ -195,52 +203,19 @@ new class extends Component
             margin-top: 2px;
         }
         
+        /*mulai dari */
         .pop-card-a5 .starting-from-label-a5 {
-            font-size: 13pt !important;
+            font-size: 15pt !important;
             font-weight: 300 !important;
-            font-style: italic;
-            color: #64748b !important;
+            text-transform: uppercase;
+            color: #000000ff !important;
             text-align: center;
             letter-spacing: 0.5px;
             line-height: 1.4;
-            margin-bottom: 2px;
+            margin-bottom: 25px;
         }
         
-        @media print {
-            body, html {
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                background: white !important;
-                overflow: hidden !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-area-wrapper-modal {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                background: white !important;
-                z-index: 99999 !important;
-            }
-            .pop-card-preview {
-                box-shadow: none !important;
-                border: none !important;
-                margin: 0 auto !important;
-                padding: 0px !important;
-            }
-            .print-card-item-modal {
-                page-break-after: always;
-                page-break-inside: avoid;
-            }
-        }
+        /* no print media here — handled by the global print style below */
      </style>
 
      <!-- Preview Modal Dialog Card -->
@@ -295,6 +270,10 @@ new class extends Component
                                    </div>
                                </div>
                            </div>
+                        <!-- Footer Image -->
+                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
+                        </div>
                            <div class="h-2"></div>
                        </div>
                   </div>
@@ -307,7 +286,7 @@ new class extends Component
                   Tutup
               </button>
               <button type="button" 
-                      @click="window.print();"
+                      @click="window.printA5SinglePrice()"
                       class="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition duration-150 flex items-center gap-1.5 shadow-md shadow-indigo-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -318,43 +297,81 @@ new class extends Component
      </div>
 </div>
 
-<!-- ==================== PRINT CONTEXT WRAPPER (HIDDEN ON SCREEN) ==================== -->
-<div id="pop-print-area" class="print-only hidden">
-    @foreach($previewQueue as $pq)
-        <div class="pop-card-preview bg-white relative flex flex-col justify-between overflow-hidden print-card-item-modal pop-card-a5"
-             style="width: 148mm; height: 105mm; margin: 0 auto; page-break-after: always; page-break-inside: avoid; border: none; box-shadow: none; box-sizing: border-box; padding: 0px; font-family: 'Arial Narrow', 'Archivo Narrow', Arial, sans-serif;">
-            
-            <!-- Header Banner -->
-            <div class="header-banner-a5">
-                <span>{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
-            </div>
+@script
+<script>
+window.printA5SinglePrice = function() {
+    var area = document.getElementById('pop-print-area-a5sp');
+    if (!area) { alert('Data print tidak ditemukan.'); return; }
+    var html = area.innerHTML;
+    if (!html.trim()) { alert('Tidak ada data untuk dicetak.'); return; }
 
-            <!-- Content Body -->
-            <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
-                <!-- Brand Block -->
-                <div>
-                    <div class="brand-name-a5">{{ $pq['brand_name'] }}</div>
-                    <div class="product-desc-a5">{{ $pq['product_desc'] }}</div>
-                </div>
+    var win = window.open('', '_blank', 'width=1200,height=900');
+    if (!win) { alert('Popup diblokir browser! Izinkan popup untuk domain ini.'); return; }
+    win.document.open();
+    win.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+        + '<style>'
+        + '@page { size: 297mm 210mm landscape; margin: 0; }'
+        + '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }'
+        + 'body { background: white; font-family: \'Arial Narrow\', Arial, sans-serif; }'
+        + '</style>'
+        + '</head><body>' + html + '</body></html>'
+    );
+    win.document.close();
+    win.focus();
+    setTimeout(function() {
+        win.print();
+        setTimeout(function() { win.close(); }, 500);
+    }, 400);
+};
+</script>
+@endscript
 
-                <!-- Price Area -->
-                <div class="price-area-a5">
-                    @php
-                        $priceParts = $this->formatPriceStatic($pq['primary_price']);
-                    @endphp
-                    <div class="flex flex-col items-center">
-                        @if(!empty($pq['show_starting_from']))
-                            <div class="starting-from-label-a5">mulai dari</div>
-                        @endif
-                        <div class="price-wrapper-a5">
-                            <span class="price-rp-a5">Rp</span>
-                            <span class="price-base-a5">{{ $priceParts['base'] }}</span>
-                            <span class="price-suffix-a5">{{ $priceParts['suffix'] }}</span>
+<!-- ==================== PRINT DATA AREA (hidden off-screen) ==================== -->
+<div id="pop-print-area-a5sp" style="position:absolute;left:-99999px;top:0;width:297mm;overflow:hidden;">
+    @php
+        $chunks = array_chunk($previewQueue, 4);
+    @endphp
+
+    @foreach($chunks as $chunkIndex => $chunk)
+        <div style="width:297mm;height:210mm;display:grid;grid-template-columns:148mm 149mm;grid-template-rows:105mm 105mm;box-sizing:border-box;{{ !$loop->last ? 'page-break-after:always;break-after:page;' : '' }}">
+            @foreach($chunk as $pq)
+                @php $priceParts = $this->formatPriceStatic($pq['primary_price']); @endphp
+                <div style="width:148mm;height:105mm;box-sizing:border-box;font-family:'Arial Narrow',Arial,sans-serif;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;background-color:white;color:black;border:1px solid #000;">
+
+                    <!-- Header Banner -->
+                    <div style="background-color:#dc2626;color:white;text-align:center;text-transform:uppercase;display:flex;align-items:center;justify-content:center;margin:12px 12px 0 12px;height:75px;box-sizing:border-box;padding:0 10px;">
+                        <span style="font-size:40pt;font-weight:700;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
+                    </div>
+
+                    <!-- Content Body -->
+                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:12px 20px 8px 20px;">
+                        <div>
+                            <div style="font-size:40pt;font-weight:600;text-transform:uppercase;color:black;line-height:1;margin-top:-10px;letter-spacing:-0.5px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['brand_name'] }}</div>
+                            <div style="font-size:18pt;font-weight:400;text-transform:uppercase;color:#000;line-height:1.2;margin-top:-5px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['product_desc'] }}</div>
+                        </div>
+
+                        <!-- Price Area -->
+                        <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;margin-top:-20px;margin-bottom:-10px;">
+                            <div style="display:flex;flex-direction:column;align-items:center;">
+                                @if(!empty($pq['show_starting_from']))
+                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1.4;margin-bottom:25px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                @endif
+                                <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;line-height:0.85;margin-top:-20px;">
+                                    <span style="font-size:20pt;font-weight:400;color:#000;margin-top:0;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                    <span style="font-size:100pt;font-weight:700;letter-spacing:-2px;line-height:0.8;font-family:'Arial Narrow',Arial,sans-serif;">{{ $priceParts['base'] }}</span>
+                                    <span style="font-size:72pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $priceParts['suffix'] }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    <!-- Footer Image -->
+                    <div style="text-align:center;padding-bottom:8px;padding-top:2px;line-height:0;">
+                        <img src="{{ asset('images/Picture2.bmp') }}" alt="" style="max-height:16px;width:auto;display:inline-block;object-fit:contain;">
+                    </div>
                 </div>
-                <div class="h-2"></div>
-            </div>
+            @endforeach
         </div>
     @endforeach
 </div>

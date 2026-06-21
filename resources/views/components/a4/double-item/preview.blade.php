@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Models\Pop;
 use Livewire\Component;
@@ -347,6 +347,10 @@ new class extends Component
                                    </div>
                                </div>
                            </div>
+                        <!-- Footer Image -->
+                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
+                        </div>
                            <div class="h-4"></div>
                        </div>
                   </div>
@@ -425,6 +429,10 @@ new class extends Component
                         </div>
                     </div>
                 </div>
+            <!-- Footer Image -->
+            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
+            </div>
                 <div class="h-4"></div>
             </div>
         </div>
