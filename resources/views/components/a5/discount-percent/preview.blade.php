@@ -110,7 +110,7 @@ new class extends Component
             left: -3%;
             right: -3%;
             top: 50%;
-            height: 2px;
+            height: 4px;
             background-color: #000000 !important;
             transform: rotate(-6deg);
         }
@@ -238,66 +238,91 @@ new class extends Component
                          </div>
 
                        <!-- Content Body -->
-                       <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
-                           <!-- Brand Block -->
-                           <div>
-                               <div class="brand-name-a5">{{ $activePreviewPop['brand_name'] }}</div>
-                           </div>
+                       @php
+                           $showDesc = !empty($activePreviewPop['additional_data']['show_description']);
+                           $showStart = !empty($activePreviewPop['show_starting_from']);
+                           $isDouble = !empty($activePreviewPop['additional_data']['is_double_discount']);
+                           
+                           $disc1 = $activePreviewPop['additional_data']['discount_percent'] ?? '50';
+                           $disc2 = $activePreviewPop['additional_data']['discount_percent_2'] ?? '';
+                           
+                           $promoPrice = $this->formatPriceStatic($activePreviewPop['primary_price'] ?? '');
+                           $oldPrice = $this->formatPriceStatic($activePreviewPop['secondary_price'] ?? '');
+                       @endphp
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 20px 4px 20px; line-height: 1; box-sizing: border-box;">
+                            <!-- Top: Brand & Description -->
+                            <div style="text-align: center; width: 100%;">
+                                <div style="font-size: 34pt; font-weight: 700; text-transform: uppercase; color: black; line-height: 1; letter-spacing: -0.5px; font-family:'Arial Narrow',Arial,sans-serif;">
+                                    {{ $activePreviewPop['brand_name'] }}
+                                </div>
+                                @if($showDesc && !empty($activePreviewPop['product_desc']))
+                                    <div style="font-size: 15pt; font-weight: 600; text-transform: uppercase; color: #1e293b; line-height: 1.1; margin-top: 2px; font-family:'Arial Narrow',Arial,sans-serif;">
+                                        {{ $activePreviewPop['product_desc'] }}
+                                    </div>
+                                @endif
+                            </div>
 
-                           <!-- Price Area -->
-                           <div class="price-area-a5">
-                               <div class="flex flex-col items-center w-full">
-                                   <div class="flex items-center text-[#dc2626] font-bold" style="line-height: 1;">
-                                       @if($activePreviewPop['additional_data']['has_sd'] ?? false)
-                                           <span class="text-black font-bold uppercase mr-1.5" style="font-size: 24pt;">S/D</span>
-                                       @endif
-                                       <span style="font-size: 140pt; line-height: 0.8; letter-spacing: -3px;">{{ $activePreviewPop['additional_data']['discount_percent'] ?? '50' }}</span>
-                                       <span style="font-size: 24pt; margin-left: 2px;">%</span>
-                                   </div>
-                                   
-                                   <!-- Bottom Comparative List -->
-                                   @php
-                                       $item1O = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_old_price'] ?? '');
-                                       $item1P = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_price'] ?? '');
-                                       $item2O = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_old_price'] ?? '');
-                                       $item2P = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_price'] ?? '');
-                                   @endphp
-                                   <div class="w-full border-t border-slate-300 mt-1 pt-1.5 text-black">
-                                       <div class="grid grid-cols-2 gap-2 text-center">
-                                           <div class="flex flex-col items-center">
-                                               <span class="text-[12px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                               <div class="coret-diagonal-preview text-[11px] text-slate-500 font-semibold mb-0.5">
-                                                   <span>Rp</span>
-                                                   <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
-                                               </div>
-                                               <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 16px;">
-                                                   <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
-                                                   <span>{{ $item1P['base'] }}</span>
-                                                   <span class="text-[11px] mt-0.5">{{ $item1P['suffix'] }}</span>
-                                               </div>
-                                           </div>
-                                           
-                                           <div class="flex flex-col items-center border-l border-slate-200">
-                                               <span class="text-[12px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                               <div class="coret-diagonal-preview text-[11px] text-slate-500 font-semibold mb-0.5">
-                                                   <span>Rp</span>
-                                                   <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
-                                               </div>
-                                               <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 16px;">
-                                                   <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
-                                                   <span>{{ $item2P['base'] }}</span>
-                                                   <span class="text-[11px] mt-0.5">{{ $item2P['suffix'] }}</span>
-                                               </div>
-                                           </div>
+                            <!-- Middle: Split Section (Discount & Prices) -->
+                            <!-- Outer: centers the group vertically between description and footer -->
+                             <div style="display: flex; flex-direction: column; justify-content: center; align-items: stretch; width: 100%; flex-grow: 1;">
+                                <!-- Inner: keeps diskon bottom-aligned with harga promo -->
+                                <div style="display: flex; flex-direction: row; align-items: flex-end; justify-content: space-between; width: 100%;">
+                                 <!-- Left Column: Discount -->
+                                 <div style="width: 50%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                                     @if(!$isDouble)
+                                         <!-- Single Discount Mode (Extremely Large) -->
+                                         <div style="display: flex; align-items: flex-start; color: #dc2626; font-weight: 700; line-height: 0.8;">
+                                             <span style="font-size: 135pt; line-height: 0.8; letter-spacing: -5px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $disc1 }}</span>
+                                             <span style="font-size: 32pt; margin-top: 10px; margin-left: 2px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                         </div>
+                                     @else
+                                         <!-- Double Discount Mode (Large + Small) -->
+                                         <div style="display: flex; align-items: flex-end; justify-content: center; color: #dc2626; font-weight: 700; line-height: 0.8; margin-left: 15px;">
+                                             <!-- First Disc (Large) -->
+                                             <div style="display: flex; align-items: flex-start; line-height: 0.8;">
+                                                 <span style="font-size: 135pt; line-height: 0.8; letter-spacing: -3px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $disc1 }}</span>
+                                                 <span style="font-size: 24pt; margin-top: 6px; margin-left: 1px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                             </div>
+                                             <!-- Plus Sign (Vertically centered with the primary discount) -->
+                                             <div style="display: flex; align-items: center; align-self: flex-end; height: 135pt; margin-left: -14px; margin-right: -14px;">
+                                                 <span style="font-size: 28pt; font-weight: 700; color: black; margin: 0; line-height: 1; font-family:'Arial Narrow',Arial,sans-serif;">+</span>
+                                             </div>
+                                             <!-- Second Disc (Small) -->
+                                             <div style="display: flex; align-items: flex-start; line-height: 0.8;">
+                                                 <span style="font-size: 75pt; line-height: 0.8; letter-spacing: -2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $disc2 }}</span>
+                                                 <span style="font-size: 16pt; margin-top: 4px; margin-left: 1px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                             </div>
+                                         </div>
+                                     @endif
+                                  </div>
+
+                               <!-- Right Column: Prices (Always Large) -->
+                               <div style="width: 44%; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; margin-left: auto; padding-right: 8px; box-sizing: border-box;">
+                                   @if($showStart && !empty($activePreviewPop['secondary_price']))
+                                       <div style="font-size: 17pt; font-weight: 600; color: black; margin-bottom: 2px; line-height: 1; font-family:'Arial Narrow',Arial,sans-serif;">Mulai Dari</div>
+                                   @endif
+
+                                   @if(!empty($activePreviewPop['secondary_price']))
+                                       <div class="coret-diagonal-preview" style="color: #dc2626; font-weight: 700; display: inline-flex; align-items: flex-start; margin-bottom: 3px;">
+                                           <span style="font-size: 18pt; font-weight: 700; margin-top: 3px; margin-right: 1px; font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                           <span style="font-size: 54pt; line-height: 0.9; font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldPrice['base'] }}</span>
+                                           <span style="font-size: 24pt; font-weight: 700; margin-top: 2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldPrice['suffix'] }}</span>
                                        </div>
+                                   @endif
+
+                                   <div style="color: #dc2626; font-weight: 700; display: inline-flex; align-items: flex-start; margin-top: -2px;">
+                                       <span style="font-size: 22pt; font-weight: 700; margin-top: 7px; margin-right: 2px; font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                       <span style="font-size: 68pt; line-height: 0.8; letter-spacing: -2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoPrice['base'] }}</span>
+                                       <span style="font-size: 30pt; font-weight: 700; margin-top: 4px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoPrice['suffix'] }}</span>
                                    </div>
                                </div>
+                            </div>
+                            </div>
+
+                           <!-- Footer Image -->
+                           <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0; flex-shrink: 0;">
+                               <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                            </div>
-                        <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-                        </div>
-                           <div class="h-2"></div>
                        </div>
                   </div>
               @endif
@@ -338,7 +363,7 @@ window.printA5DiscountPercent = function() {
         + '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }'
         + 'body { background: white; font-family: \'Arial Narrow\', Arial, sans-serif; }'
         + '.coret-diagonal-preview { position: relative; display: inline-block; }'
-        + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 2px; background-color: #000000 !important; transform: rotate(-6deg); }'
+        + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 4px; background-color: #000000 !important; transform: rotate(-6deg); }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -369,57 +394,82 @@ window.printA5DiscountPercent = function() {
                     </div>
 
                     <!-- Content Body -->
-                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:12px 20px 8px 20px;line-height:none;">
-                        <!-- Brand Block -->
-                        <div>
-                            <div style="font-size:46pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;margin-top:8px;letter-spacing:-0.5px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['brand_name'] }}</div>
+                    @php
+                        $pqShowDesc = !empty($pq['additional_data']['show_description']);
+                        $pqShowStart = !empty($pq['show_starting_from']);
+                        $pqIsDouble = !empty($pq['additional_data']['is_double_discount']);
+                        
+                        $pqDisc1 = $pq['additional_data']['discount_percent'] ?? '50';
+                        $pqDisc2 = $pq['additional_data']['discount_percent_2'] ?? '';
+                        
+                        $pqPromoPrice = $this->formatPriceStatic($pq['primary_price'] ?? '');
+                        $pqOldPrice = $this->formatPriceStatic($pq['secondary_price'] ?? '');
+                    @endphp
+                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:6px 20px 4px 20px;line-height:1;box-sizing:border-box;">
+                        <!-- Top: Brand & Description -->
+                        <div style="text-align: center; width: 100%;">
+                            <div style="font-size: 34pt; font-weight: 700; text-transform: uppercase; color: black; line-height: 1; letter-spacing: -0.5px; font-family:'Arial Narrow',Arial,sans-serif;">
+                                {{ $pq['brand_name'] }}
+                            </div>
+                            @if($pqShowDesc && !empty($pq['product_desc']))
+                                <div style="font-size: 15pt; font-weight: 600; text-transform: uppercase; color: #1e293b; line-height: 1.1; margin-top: 2px; font-family:'Arial Narrow',Arial,sans-serif;">
+                                    {{ $pq['product_desc'] }}
+                                </div>
+                            @endif
                         </div>
 
-                        <!-- Price Area -->
-                        <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;margin-top:2px;margin-bottom:2px;">
-                            <div style="display:flex;flex-direction:column;align-items:center;width:100%;">
-                                <div style="display:flex;align-items:center;color:#dc2626;font-weight:bold;line-height:1;">
-                                    @if($pq['additional_data']['has_sd'] ?? false)
-                                        <span style="color:black;font-weight:bold;text-transform:uppercase;margin-right:6px;font-size:24pt;font-family:'Arial Narrow',Arial,sans-serif;">S/D</span>
+                        <!-- Middle: Split Section (Discount & Prices) -->
+                        <!-- Outer: centers the group vertically between description and footer -->
+                        <div style="display: flex; flex-direction: column; justify-content: center; align-items: stretch; width: 100%; flex-grow: 1;">
+                            <!-- Inner: keeps diskon bottom-aligned with harga promo -->
+                            <div style="display: flex; flex-direction: row; align-items: flex-end; justify-content: space-between; width: 100%;">
+                                <!-- Left Column: Discount -->
+                                <div style="width: 50%; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                                    @if(!$pqIsDouble)
+                                        <!-- Single Discount Mode (Extremely Large) -->
+                                        <div style="display: flex; align-items: flex-start; color: #dc2626; font-weight: 700; line-height: 0.8;">
+                                            <span style="font-size: 130pt; line-height: 0.8; letter-spacing: -5px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqDisc1 }}</span>
+                                            <span style="font-size: 32pt; margin-top: 10px; margin-left: 2px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                        </div>
+                                    @else
+                                        <!-- Double Discount Mode (Large + Small) -->
+                                        <div style="display: flex; align-items: flex-end; justify-content: center; color: #dc2626; font-weight: 700; line-height: 0.8; margin-left: 15px;">
+                                            <!-- First Disc (Large) -->
+                                            <div style="display: flex; align-items: flex-start; line-height: 0.8;">
+                                                <span style="font-size: 135pt; line-height: 0.8; letter-spacing: -3px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqDisc1 }}</span>
+                                                <span style="font-size: 24pt; margin-top: 6px; margin-left: 1px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                            </div>
+                                            <!-- Plus Sign (Vertically centered with the primary discount) -->
+                                            <div style="display: flex; align-items: center; align-self: flex-end; height: 135pt; margin-left: -14px; margin-right: -14px;">
+                                                <span style="font-size: 28pt; font-weight: 700; color: black; margin: 0; line-height: 1; font-family:'Arial Narrow',Arial,sans-serif;">+</span>
+                                            </div>
+                                            <!-- Second Disc (Small) -->
+                                            <div style="display: flex; align-items: flex-start; line-height: 0.8;">
+                                                <span style="font-size: 80pt; line-height: 0.8; letter-spacing: -2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqDisc2 }}</span>
+                                                <span style="font-size: 16pt; margin-top: 4px; margin-left: 1px; font-family:'Arial Narrow',Arial,sans-serif;">%</span>
+                                            </div>
+                                        </div>
                                     @endif
-                                    <span style="font-size:140pt;line-height:0.8;letter-spacing:-3px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['additional_data']['discount_percent'] ?? '50' }}</span>
-                                    <span style="font-size:24pt;margin-left:2px;font-family:'Arial Narrow',Arial,sans-serif;">%</span>
                                 </div>
-                                
-                                <!-- Bottom Comparative List -->
-                                @php
-                                    $item1O = $this->formatPriceStatic($pq['additional_data']['item1_old_price'] ?? '');
-                                    $item1P = $this->formatPriceStatic($pq['additional_data']['item1_price'] ?? '');
-                                    $item2O = $this->formatPriceStatic($pq['additional_data']['item2_old_price'] ?? '');
-                                    $item2P = $this->formatPriceStatic($pq['additional_data']['item2_price'] ?? '');
-                                @endphp
-                                <div style="width:100%;border-top:1px solid #cbd5e1;margin-top:4px;padding-top:6px;color:black;">
-                                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:center;">
-                                        <div style="display:flex;flex-direction:column;align-items:center;">
-                                            <span style="font-size:12px;font-weight:bold;color:#334155;display:block;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ strtoupper($pq['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                            <div class="coret-diagonal-preview" style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">
-                                                <span>Rp</span>
-                                                <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
-                                            </div>
-                                            <div style="color:#dc2626;font-weight:bold;display:flex;align-items:flex-start;font-size:16px;">
-                                                <span style="font-size:10px;margin-top:2px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
-                                                <span style="font-family:'Arial Narrow',Arial,sans-serif;">{{ $item1P['base'] }}</span>
-                                                <span style="font-size:11px;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $item1P['suffix'] }}</span>
-                                            </div>
+
+                                <!-- Right Column: Prices (Always Large) -->
+                                <div style="width: 44%; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; margin-left: auto; padding-right: 8px; box-sizing: border-box;">
+                                    @if($pqShowStart && !empty($pq['secondary_price']))
+                                        <div style="font-size: 17pt; font-weight: 600; color: black; margin-bottom: 2px; line-height: 1; font-family:'Arial Narrow',Arial,sans-serif;">Mulai Dari</div>
+                                    @endif
+
+                                    @if(!empty($pq['secondary_price']))
+                                        <div class="coret-diagonal-preview" style="color: #dc2626; font-weight: 700; display: inline-flex; align-items: flex-start; margin-bottom: 3px;">
+                                            <span style="font-size: 18pt; font-weight: 700; margin-top: 3px; margin-right: 1px; font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                            <span style="font-size: 54pt; line-height: 0.9; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqOldPrice['base'] }}</span>
+                                            <span style="font-size: 24pt; font-weight: 700; margin-top: 2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqOldPrice['suffix'] }}</span>
                                         </div>
-                                        
-                                        <div style="display:flex;flex-direction:column;align-items:center;border-left:1px solid #e2e8f0;">
-                                            <span style="font-size:12px;font-weight:bold;color:#334155;display:block;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ strtoupper($pq['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                            <div class="coret-diagonal-preview" style="font-size:11px;color:#64748b;font-weight:600;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">
-                                                <span>Rp</span>
-                                                <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
-                                            </div>
-                                            <div style="color:#dc2626;font-weight:bold;display:flex;align-items:flex-start;font-size:16px;">
-                                                <span style="font-size:10px;margin-top:2px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
-                                                <span style="font-family:'Arial Narrow',Arial,sans-serif;">{{ $item2P['base'] }}</span>
-                                                <span style="font-size:11px;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $item2P['suffix'] }}</span>
-                                            </div>
-                                        </div>
+                                    @endif
+
+                                    <div style="color: #dc2626; font-weight: 700; display: inline-flex; align-items: flex-start; margin-top: -2px;">
+                                        <span style="font-size: 22pt; font-weight: 700; margin-top: 7px; margin-right: 2px; font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <span style="font-size: 68pt; line-height: 0.8; letter-spacing: -2px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqPromoPrice['base'] }}</span>
+                                        <span style="font-size: 30pt; font-weight: 700; margin-top: 4px; font-family:'Arial Narrow',Arial,sans-serif;">{{ $pqPromoPrice['suffix'] }}</span>
                                     </div>
                                 </div>
                             </div>
