@@ -19,9 +19,11 @@ class Pop extends Model
         'primary_price',
         'secondary_price',
         'additional_data',
+        'show_starting_from',
     ];
 
     protected $casts = [
         'additional_data' => 'array',
+        'show_starting_from' => 'boolean',
     ];
 }

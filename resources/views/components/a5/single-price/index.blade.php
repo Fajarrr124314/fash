@@ -22,6 +22,7 @@ new class extends Component
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
+    public $showStartingFrom = false;
 
     public function mount()
     {
@@ -73,6 +74,7 @@ new class extends Component
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
+            $this->showStartingFrom = (bool)$pop->show_starting_from;
             
             $this->formTitle = 'Edit POP A5 Single Price';
             $this->showForm = true;
@@ -88,6 +90,7 @@ new class extends Component
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
+        $this->showStartingFrom = false;
     }
 
     public function save()
@@ -114,7 +117,8 @@ new class extends Component
             'secondary_price' => null,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => null,
+            'show_starting_from' => $this->showStartingFrom,
         ];
 
         if ($this->popId) {
@@ -283,6 +287,7 @@ new class extends Component
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Merek & Deskripsi</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Harga Jual</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-20">Unit</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-24">Mulai Dari</th>
                         <th class="py-4 px-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Created At</th>
                     </tr>
                 </thead>
@@ -364,6 +369,17 @@ new class extends Component
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
                                     {{ $pop['unit'] }}
                                 </td>
+
+                                <td class="py-3 px-4 text-center">
+                                    @if($pop['show_starting_from'])
+                                        <span class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
+                                            Ya
+                                        </span>
+                                    @else
+                                        <span class="text-slate-300 text-[10px] font-semibold">—</span>
+                                    @endif
+                                </td>
                                 
                                 <td class="py-3 px-5 text-right text-slate-400 font-medium">
                                     {{ date('d M Y H:i', strtotime($pop['created_at'])) }}
@@ -439,6 +455,21 @@ new class extends Component
                           @error('qtyPrint')
                               <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                           @enderror
+                      </div>
+
+                      {{-- Mulai Dari Toggle --}}
+                      <div class="md:col-span-2">
+                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Label Harga</label>
+                          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                              <div class="relative">
+                                  <input type="checkbox" wire:model.live="showStartingFrom" id="showStartingFrom" class="sr-only peer">
+                                  <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                              </div>
+                              <div>
+                                  <span class="text-sm font-bold text-slate-700">Tampilkan tulisan "mulai dari"</span>
+                                  <p class="text-xs text-slate-400 font-medium mt-0.5">Jika aktif, teks <em>mulai dari</em> akan muncul di atas harga pada preview &amp; cetak</p>
+                              </div>
+                          </label>
                       </div>
                   </div>
 

@@ -122,36 +122,36 @@ new class extends Component
             justify-content: center;
             margin: 12px 12px 0 12px;
             border-radius: 0px;
-            height: 60px;
+            height: 75px;
             box-sizing: border-box;
             padding: 0 10px;
         }
         
         .pop-card-a5 .header-banner-a5 span {
-            font-size: 46pt !important;
+            font-size: 40pt !important;
             font-weight: 700 !important;
             line-height: 1;
             letter-spacing: -0.5px;
         }
         
         .pop-card-a5 .brand-name-a5 {
-            font-size: 46pt !important;
-            font-weight: 700 !important;
+            font-size: 40pt !important;
+            font-weight: 600 !important;
             text-transform: uppercase;
             color: black !important;
             line-height: 1;
-            margin-top: 8px;
+            margin-top: -10px;
             letter-spacing: -0.5px;
             text-align: center;
         }
         
         .pop-card-a5 .product-desc-a5 {
-            font-size: 21pt !important;
+            font-size: 18pt !important;
             font-weight: 400 !important;
             text-transform: uppercase;
             color: #334155 !important;
             line-height: 1.2;
-            margin-top: 1px;
+            margin-top: -5px;
             text-align: center;
         }
         
@@ -160,8 +160,8 @@ new class extends Component
             align-items: center;
             justify-content: center;
             flex-grow: 1;
-            margin-top: 2px;
-            margin-bottom: 2px;
+            margin-top: 10px;
+            margin-bottom: -10px;
         }
         
         .pop-card-a5 .price-wrapper-a5 {
@@ -182,7 +182,7 @@ new class extends Component
         }
         
         .pop-card-a5 .price-base-a5 {
-            font-size: 110pt !important;
+            font-size: 100pt !important;
             font-weight: 700 !important;
             letter-spacing: -2px;
             line-height: 0.8;
@@ -193,6 +193,17 @@ new class extends Component
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 2px;
+        }
+        
+        .pop-card-a5 .starting-from-label-a5 {
+            font-size: 13pt !important;
+            font-weight: 300 !important;
+            font-style: italic;
+            color: #64748b !important;
+            text-align: center;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            margin-bottom: 2px;
         }
         
         @media print {
@@ -273,11 +284,16 @@ new class extends Component
                                @php
                                    $priceParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                @endphp
-                               <div class="price-wrapper-a5">
-                                   <span class="price-rp-a5">Rp</span>
-                                   <span class="price-base-a5">{{ $priceParts['base'] }}</span>
-                                   <span class="price-suffix-a5">{{ $priceParts['suffix'] }}</span>
-                                </div>
+                               <div class="flex flex-col items-center">
+                                   @if(!empty($activePreviewPop['show_starting_from']))
+                                       <div class="starting-from-label-a5">mulai dari</div>
+                                   @endif
+                                   <div class="price-wrapper-a5">
+                                       <span class="price-rp-a5">Rp</span>
+                                       <span class="price-base-a5">{{ $priceParts['base'] }}</span>
+                                       <span class="price-suffix-a5">{{ $priceParts['suffix'] }}</span>
+                                   </div>
+                               </div>
                            </div>
                            <div class="h-2"></div>
                        </div>
@@ -326,10 +342,15 @@ new class extends Component
                     @php
                         $priceParts = $this->formatPriceStatic($pq['primary_price']);
                     @endphp
-                    <div class="price-wrapper-a5">
-                        <span class="price-rp-a5">Rp</span>
-                        <span class="price-base-a5">{{ $priceParts['base'] }}</span>
-                        <span class="price-suffix-a5">{{ $priceParts['suffix'] }}</span>
+                    <div class="flex flex-col items-center">
+                        @if(!empty($pq['show_starting_from']))
+                            <div class="starting-from-label-a5">mulai dari</div>
+                        @endif
+                        <div class="price-wrapper-a5">
+                            <span class="price-rp-a5">Rp</span>
+                            <span class="price-base-a5">{{ $priceParts['base'] }}</span>
+                            <span class="price-suffix-a5">{{ $priceParts['suffix'] }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="h-2"></div>
