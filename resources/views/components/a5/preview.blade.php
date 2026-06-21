@@ -107,8 +107,8 @@ new class extends Component
             right: -3%;
             top: 50%;
             height: 3px;
-            background-color: #dc2626; /* Red line for strike-through */
-            transform: rotate(-8deg);
+            background-color: #000000 !important; /* Black line in reference image */
+            transform: rotate(-6deg);
         }
         
         /* Specific CSS rules for POP A5 (printed on A6 Landscape) */
@@ -125,6 +125,7 @@ new class extends Component
             overflow: hidden;
         }
         
+        /* header merah kotak*/
         .pop-card-a5 .header-banner-a5 {
             background-color: #dc2626 !important;
             color: white !important;
@@ -133,21 +134,22 @@ new class extends Component
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            height: 52px; /* Fit 40pt text */
+            margin: 12px 12px 0 12px;
+            border-radius: 0px;
+            height: 60px; /* Fit 40pt text */
             box-sizing: border-box;
             padding: 0 10px;
         }
         
         .pop-card-a5 .header-banner-a5 span {
-            font-size: 40pt !important;
+            font-size: 46pt !important;
             font-weight: 700 !important;
             line-height: 1;
             letter-spacing: -0.5px;
         }
         
         .pop-card-a5 .brand-name-a5 {
-            font-size: 40pt !important;
+            font-size: 46pt !important;
             font-weight: 700 !important;
             text-transform: uppercase;
             color: black !important;
@@ -158,7 +160,7 @@ new class extends Component
         }
         
         .pop-card-a5 .product-desc-a5 {
-            font-size: 18pt !important;
+            font-size: 21pt !important;
             font-weight: 400 !important;
             text-transform: uppercase;
             color: #334155 !important;
@@ -185,22 +187,23 @@ new class extends Component
         }
         
         .pop-card-a5 .price-rp-a5 {
-            font-size: 18pt !important;
+            font-size: 20pt !important;
             font-weight: 400 !important;
+            color: #000000ff !important;
             margin-top: 6px;
             margin-right: 2px;
             line-height: 1;
         }
         
         .pop-card-a5 .price-base-a5 {
-            font-size: 70pt !important;
+            font-size: 110pt !important;
             font-weight: 700 !important;
             letter-spacing: -2px;
             line-height: 0.8;
         }
         
         .pop-card-a5 .price-suffix-a5 {
-            font-size: 30pt !important;
+            font-size: 72pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 2px;
@@ -366,21 +369,28 @@ new class extends Component
                                    </div>
                                @endif
 
-                               <!-- 2. Was / Is Price (Coret) -->
+                                <!-- 2. Was / Is Price (Coret) -->
                                @if($activePreviewPop['layout_type'] === 'was_is_price')
                                    @php
                                        $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                        $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
                                    @endphp
-                                   <div class="was-is-wrapper-a5 flex flex-col items-center">
-                                       <div class="was-price-row coret-diagonal-preview">
-                                           <span class="was-rp">Rp</span>
-                                           <span class="was-price-value">{{ $oldParts['base'] . $oldParts['suffix'] }}</span>
+                                   <div class="flex flex-col items-center justify-center gap-1 my-1">
+                                       <!-- Old Price Row (Coret) -->
+                                       <div class="flex items-start select-none relative">
+                                           <span class="text-black font-normal" style="font-size: 13pt; margin-top: 6px; margin-right: 2px; line-height: 1;">Rp</span>
+                                           <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
+                                               <span style="font-size: 44pt; line-height: 0.8; letter-spacing: -1px;">{{ $oldParts['base'] }}</span>
+                                               <span style="font-size: 20pt; line-height: 0.8; margin-top: 1px;">{{ $oldParts['suffix'] }}</span>
+                                           </div>
                                        </div>
-                                       <div class="price-wrapper-a5">
-                                           <span class="price-rp-a5">Rp</span>
-                                           <span class="price-base-a5">{{ $promoParts['base'] }}</span>
-                                           <span class="price-suffix-a5">{{ $promoParts['suffix'] }}</span>
+                                       <!-- Promo Price Row -->
+                                       <div class="flex items-start select-none">
+                                           <span class="text-black font-normal" style="font-size: 19pt; margin-top: 8px; margin-right: 2px; line-height: 1;">Rp</span>
+                                           <div class="flex items-start text-[#dc2626] font-bold">
+                                               <span style="font-size: 78pt; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
+                                               <span style="font-size: 34pt; line-height: 0.8; margin-top: 1px;">{{ $promoParts['suffix'] }}</span>
+                                           </div>
                                        </div>
                                    </div>
                                @endif
@@ -511,15 +521,22 @@ new class extends Component
                             $promoParts = $this->formatPriceStatic($pq['primary_price']);
                             $oldParts = $this->formatPriceStatic($pq['secondary_price']);
                         @endphp
-                        <div class="was-is-wrapper-a5 flex flex-col items-center">
-                            <div class="was-price-row coret-diagonal-preview">
-                                <span class="was-rp">Rp</span>
-                                <span class="was-price-value">{{ $oldParts['base'] . $oldParts['suffix'] }}</span>
+                        <div class="flex flex-col items-center justify-center gap-1 my-1">
+                            <!-- Old Price Row (Coret) -->
+                            <div class="flex items-start select-none relative">
+                                <span class="text-black font-normal" style="font-size: 13pt; margin-top: 6px; margin-right: 2px; line-height: 1;">Rp</span>
+                                <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
+                                    <span style="font-size: 44pt; line-height: 0.8; letter-spacing: -1px;">{{ $oldParts['base'] }}</span>
+                                    <span style="font-size: 20pt; line-height: 0.8; margin-top: 1px;">{{ $oldParts['suffix'] }}</span>
+                                </div>
                             </div>
-                            <div class="price-wrapper-a5">
-                                <span class="price-rp-a5">Rp</span>
-                                <span class="price-base-a5">{{ $promoParts['base'] }}</span>
-                                <span class="price-suffix-a5">{{ $promoParts['suffix'] }}</span>
+                            <!-- Promo Price Row -->
+                            <div class="flex items-start select-none">
+                                <span class="text-black font-normal" style="font-size: 19pt; margin-top: 8px; margin-right: 2px; line-height: 1;">Rp</span>
+                                <div class="flex items-start text-[#dc2626] font-bold">
+                                    <span style="font-size: 78pt; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
+                                    <span style="font-size: 34pt; line-height: 0.8; margin-top: 1px;">{{ $promoParts['suffix'] }}</span>
+                                </div>
                             </div>
                         </div>
                     @endif

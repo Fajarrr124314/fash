@@ -107,8 +107,8 @@ new class extends Component
             right: -3%;
             top: 50%;
             height: 3px;
-            background-color: #dc2626; /* Red line for strike-through */
-            transform: rotate(-8deg);
+            background-color: #000000 !important;
+            transform: rotate(-6deg);
         }
         
         /* Specific CSS rules for POP A4 (printed on A5 Portrait) */
@@ -123,6 +123,88 @@ new class extends Component
             background-color: white !important;
             color: black !important;
             overflow: hidden;
+        }
+
+        .pop-card-a4 .header-banner-a4 {
+            background-color: #dc2626 !important;
+            color: white !important;
+            text-align: center;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px 16px 0 16px;
+            height: 75px;
+            box-sizing: border-box;
+            padding: 0 10px;
+        }
+
+        .pop-card-a4 .header-banner-a4 span {
+            font-size: 46pt !important;
+            font-weight: 700 !important;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+
+        .pop-card-a4 .brand-name-a4 {
+            font-size: 46pt !important;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+            color: black !important;
+            line-height: 1;
+            margin-top: 12px;
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        .pop-card-a4 .product-desc-a4 {
+            font-size: 21pt !important;
+            font-weight: 400 !important;
+            text-transform: uppercase;
+            color: #334155 !important;
+            line-height: 1.2;
+            margin-top: 2px;
+            text-align: center;
+        }
+
+        .pop-card-a4 .price-area-a4 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        .pop-card-a4 .price-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            line-height: 0.85;
+        }
+
+        .pop-card-a4 .price-rp-a4 {
+            font-size: 20pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            margin-top: 8px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+
+        .pop-card-a4 .price-base-a4 {
+            font-size: 140pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -2px;
+            line-height: 0.8;
+        }
+
+        .pop-card-a4 .price-suffix-a4 {
+            font-size: 96pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 2px;
         }
         
         @media print {
@@ -186,11 +268,8 @@ new class extends Component
                        style="width: 148mm; height: 210mm;">
                        
                        <!-- Header Banner -->
-                       <div class="bg-[#dc2626] text-white font-bold text-center uppercase flex items-center justify-center shrink-0 w-full"
-                            style="padding: 16px 20px;">
-                           <span class="w-full tracking-wide text-center leading-none" style="font-size: 32px;">
-                               {{ $activePreviewPop['header_text'] ?: 'HARGA SPESIAL' }}
-                           </span>
+                       <div class="header-banner-a4">
+                           <span>{{ $activePreviewPop['header_text'] ?: 'HARGA SPESIAL' }}</span>
                        </div>
 
                        <!-- Content Body -->
@@ -198,12 +277,12 @@ new class extends Component
                            
                            <!-- Brand Name -->
                            <div class="w-full flex flex-col items-center" style="margin-top: 12px;">
-                               <span class="font-bold uppercase tracking-wider text-black block" style="font-size: 36px; margin-bottom: 4px;">
+                               <span class="brand-name-a4 block">
                                    {{ $activePreviewPop['brand_name'] }}
                                </span>
                                
                                @if($activePreviewPop['layout_type'] !== 'double_item')
-                                   <span class="font-semibold uppercase tracking-widest text-[#475569]" style="font-size: 13px;">
+                                   <span class="product-desc-a4 block">
                                        {{ $activePreviewPop['product_desc'] }}
                                    </span>
                                @endif
@@ -217,10 +296,10 @@ new class extends Component
                                    @php
                                        $priceParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                    @endphp
-                                   <div class="flex items-start text-[#dc2626] font-bold">
-                                       <span class="mr-0.5" style="font-size: 20px; margin-top: 4px;">Rp</span>
-                                       <span style="font-size: 88px; line-height: 0.8; letter-spacing: -2px;">{{ $priceParts['base'] }}</span>
-                                       <span style="font-size: 38px; line-height: 0.8;">{{ $priceParts['suffix'] }}</span>
+                                   <div class="price-wrapper-a4">
+                                       <span class="price-rp-a4">Rp</span>
+                                       <span class="price-base-a4">{{ $priceParts['base'] }}</span>
+                                       <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
                                    </div>
                                @endif
 
@@ -230,15 +309,22 @@ new class extends Component
                                        $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                        $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
                                    @endphp
-                                   <div class="flex flex-col items-center">
-                                       <div class="coret-diagonal-preview text-slate-500 font-semibold mb-0.5" style="font-size: 26px; margin-bottom: 4px;">
-                                           <span style="font-size: 11px;">Rp</span>
-                                           <span>{{ $oldParts['base'] . $oldParts['suffix'] }}</span>
+                                   <div class="flex flex-col items-center justify-center gap-1.5 my-1">
+                                       <!-- Old Price Row (Coret) -->
+                                       <div class="flex items-start select-none relative">
+                                           <span class="text-black font-normal" style="font-size: 16pt; margin-top: 6px; margin-right: 2px; line-height: 1;">Rp</span>
+                                           <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
+                                               <span style="font-size: 110pt; line-height: 0.8; letter-spacing: -1.5px;">{{ $oldParts['base'] }}</span>
+                                               <span style="font-size: 72pt; line-height: 0.8; margin-top: 1px;">{{ $oldParts['suffix'] }}</span>
+                                           </div>
                                        </div>
-                                       <div class="flex items-start text-[#dc2626] font-bold">
-                                           <span class="mr-0.5" style="font-size: 20px; margin-top: 4px;">Rp</span>
-                                           <span style="font-size: 88px; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
-                                           <span style="font-size: 38px; line-height: 0.8;">{{ $promoParts['suffix'] }}</span>
+                                       <!-- Promo Price Row -->
+                                       <div class="flex items-start select-none">
+                                           <span class="text-black font-normal" style="font-size: 20pt; margin-top: 8px; margin-right: 2px; line-height: 1;">Rp</span>
+                                           <div class="flex items-start text-[#dc2626] font-bold">
+                                               <span style="font-size: 130pt; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
+                                               <span style="font-size: 100pt; line-height: 0.8; margin-top: 1px;">{{ $promoParts['suffix'] }}</span>
+                                           </div>
                                        </div>
                                    </div>
                                @endif
@@ -248,10 +334,10 @@ new class extends Component
                                    <div class="flex flex-col items-center w-full">
                                        <div class="flex items-center text-[#dc2626] font-bold" style="line-height: 1;">
                                            @if($activePreviewPop['additional_data']['has_sd'] ?? false)
-                                               <span class="text-black font-bold uppercase mr-1.5" style="font-size: 24px;">S/D</span>
+                                               <span class="text-black font-bold uppercase mr-1.5" style="font-size: 37.5pt;">S/D</span>
                                            @endif
-                                           <span style="font-size: 110px; line-height: 0.8; letter-spacing: -2px;">{{ $activePreviewPop['additional_data']['discount_percent'] ?? '60' }}</span>
-                                           <span style="font-size: 50px; margin-left: 2px;">%</span>
+                                           <span style="font-size: 210pt; line-height: 0.8; letter-spacing: -3px;">{{ $activePreviewPop['additional_data']['discount_percent'] ?? '50' }}</span>
+                                           <span style="font-size: 37.5pt; margin-left: 2px;">%</span>
                                        </div>
                                        
                                        <!-- Bottom Comparative List -->
@@ -264,28 +350,28 @@ new class extends Component
                                        <div class="w-full border-t border-slate-300 mt-2 pt-2 text-black">
                                            <div class="grid grid-cols-2 gap-2 text-center">
                                                <div class="flex flex-col items-center">
-                                                   <span class="text-[10px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                                   <div class="coret-diagonal-preview text-xs text-slate-500 font-semibold mb-0.5">
+                                                   <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
+                                                   <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
                                                        <span>Rp</span>
                                                        <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
                                                    </div>
-                                                   <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 14px;">
-                                                       <span class="text-[8px] mt-0.5 mr-0.5">Rp</span>
+                                                   <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
+                                                       <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
                                                        <span>{{ $item1P['base'] }}</span>
-                                                       <span class="text-[9px] mt-0.5">{{ $item1P['suffix'] }}</span>
+                                                       <span class="text-[13px] mt-0.5">{{ $item1P['suffix'] }}</span>
                                                    </div>
                                                </div>
                                                
                                                <div class="flex flex-col items-center border-l border-slate-200">
-                                                   <span class="text-[10px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                                   <div class="coret-diagonal-preview text-xs text-slate-500 font-semibold mb-0.5">
+                                                   <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
+                                                   <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
                                                        <span>Rp</span>
                                                        <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
                                                    </div>
-                                                   <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 14px;">
-                                                       <span class="text-[8px] mt-0.5 mr-0.5">Rp</span>
+                                                   <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
+                                                       <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
                                                        <span>{{ $item2P['base'] }}</span>
-                                                       <span class="text-[9px] mt-0.5">{{ $item2P['suffix'] }}</span>
+                                                       <span class="text-[13px] mt-0.5">{{ $item2P['suffix'] }}</span>
                                                    </div>
                                                </div>
                                            </div>
@@ -304,35 +390,35 @@ new class extends Component
                                    <div class="w-full flex flex-col gap-2 py-1">
                                        <div class="w-full flex justify-between items-center border-b border-dashed border-slate-300 pb-1.5">
                                            <div class="text-left flex flex-col">
-                                               <span class="text-xs font-bold text-slate-800">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? '') }}</span>
+                                               <span class="text-sm font-bold text-slate-800">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? '') }}</span>
                                                @if(!empty($activePreviewPop['additional_data']['item1_old_price']))
-                                                   <div class="coret-diagonal-preview text-[10px] text-slate-500 font-medium align-self-start mt-0.5">
+                                                   <div class="coret-diagonal-preview text-xs text-slate-500 font-medium align-self-start mt-0.5">
                                                        <span>Rp</span>
                                                        <span>{{ $i1O['base'] . $i1O['suffix'] }}</span>
                                                    </div>
                                                @endif
                                            </div>
                                            <div class="text-[#dc2626] font-bold flex items-start">
-                                               <span class="text-[9px] mt-0.5 mr-0.5">Rp</span>
-                                               <span class="text-xl leading-none">{{ $i1P['base'] }}</span>
-                                               <span class="text-[10px] leading-none font-bold mt-0.5">{{ $i1P['suffix'] }}</span>
+                                               <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
+                                               <span class="text-2xl leading-none">{{ $i1P['base'] }}</span>
+                                               <span class="text-sm leading-none font-bold mt-0.5">{{ $i1P['suffix'] }}</span>
                                            </div>
                                        </div>
                                        
                                        <div class="w-full flex justify-between items-center pt-1">
                                            <div class="text-left flex flex-col">
-                                               <span class="text-xs font-bold text-slate-800">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? '') }}</span>
+                                               <span class="text-sm font-bold text-slate-800">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? '') }}</span>
                                                @if(!empty($activePreviewPop['additional_data']['item2_old_price']))
-                                                   <div class="coret-diagonal-preview text-[10px] text-slate-500 font-medium align-self-start mt-0.5">
+                                                   <div class="coret-diagonal-preview text-xs text-slate-500 font-medium align-self-start mt-0.5">
                                                        <span>Rp</span>
                                                        <span>{{ $i2O['base'] . $i2O['suffix'] }}</span>
                                                    </div>
                                                @endif
                                            </div>
                                            <div class="text-[#dc2626] font-bold flex items-start">
-                                               <span class="text-[9px] mt-0.5 mr-0.5">Rp</span>
-                                               <span class="text-xl leading-none">{{ $i2P['base'] }}</span>
-                                               <span class="text-[10px] leading-none font-bold mt-0.5">{{ $i2P['suffix'] }}</span>
+                                               <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
+                                               <span class="text-2xl leading-none">{{ $i2P['base'] }}</span>
+                                               <span class="text-sm leading-none font-bold mt-0.5">{{ $i2P['suffix'] }}</span>
                                            </div>
                                        </div>
                                    </div>
@@ -374,11 +460,8 @@ new class extends Component
              style="width: 148mm; height: 210mm; margin: 0 auto; page-break-after: always; page-break-inside: avoid; border: none; box-shadow: none; box-sizing: border-box; padding: 0px; font-family: 'Arial Narrow', 'Archivo Narrow', Arial, sans-serif;">
             
             <!-- Header Banner -->
-            <div class="bg-[#dc2626] text-white font-bold text-center uppercase flex items-center justify-center shrink-0 w-full"
-                 style="padding: 16px 20px;">
-                <span class="w-full tracking-wide text-center leading-none" style="font-size: 32px;">
-                    {{ $pq['header_text'] ?: 'HARGA SPESIAL' }}
-                </span>
+            <div class="header-banner-a4">
+                <span>{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
             </div>
 
             <!-- Content Body -->
@@ -386,12 +469,12 @@ new class extends Component
                 
                 <!-- Brand Name -->
                 <div class="w-full flex flex-col items-center" style="margin-top: 12px;">
-                    <span class="font-bold uppercase tracking-wider text-black block" style="font-size: 36px; margin-bottom: 4px;">
+                    <span class="brand-name-a4 block">
                         {{ $pq['brand_name'] }}
                     </span>
                     
                     @if($pq['layout_type'] !== 'double_item')
-                        <span class="font-semibold uppercase tracking-widest text-[#475569]" style="font-size: 13px;">
+                        <span class="product-desc-a4 block">
                             {{ $pq['product_desc'] }}
                         </span>
                     @endif
@@ -405,10 +488,10 @@ new class extends Component
                         @php
                             $priceParts = $this->formatPriceStatic($pq['primary_price']);
                         @endphp
-                        <div class="flex items-start text-[#dc2626] font-bold">
-                            <span class="mr-0.5" style="font-size: 20px; margin-top: 4px;">Rp</span>
-                            <span style="font-size: 88px; line-height: 0.8; letter-spacing: -2px;">{{ $priceParts['base'] }}</span>
-                            <span style="font-size: 38px; line-height: 0.8;">{{ $priceParts['suffix'] }}</span>
+                        <div class="price-wrapper-a4">
+                            <span class="price-rp-a4">Rp</span>
+                            <span class="price-base-a4">{{ $priceParts['base'] }}</span>
+                            <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
                         </div>
                     @endif
 
@@ -418,15 +501,22 @@ new class extends Component
                             $promoParts = $this->formatPriceStatic($pq['primary_price']);
                             $oldParts = $this->formatPriceStatic($pq['secondary_price']);
                         @endphp
-                        <div class="flex flex-col items-center">
-                            <div class="coret-diagonal-preview text-slate-500 font-semibold mb-0.5" style="font-size: 26px; margin-bottom: 4px;">
-                                <span style="font-size: 11px;">Rp</span>
-                                <span>{{ $oldParts['base'] . $oldParts['suffix'] }}</span>
+                        <div class="flex flex-col items-center justify-center gap-1.5 my-1">
+                            <!-- Old Price Row (Coret) -->
+                            <div class="flex items-start select-none relative">
+                                <span class="text-black font-normal" style="font-size: 16pt; margin-top: 6px; margin-right: 2px; line-height: 1;">Rp</span>
+                                <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
+                                    <span style="font-size: 110pt; line-height: 0.8; letter-spacing: -1.5px;">{{ $oldParts['base'] }}</span>
+                                    <span style="font-size: 72pt; line-height: 0.8; margin-top: 1px;">{{ $oldParts['suffix'] }}</span>
+                                </div>
                             </div>
-                            <div class="flex items-start text-[#dc2626] font-bold">
-                                <span class="mr-0.5" style="font-size: 20px; margin-top: 4px;">Rp</span>
-                                <span style="font-size: 88px; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
-                                <span style="font-size: 38px; line-height: 0.8;">{{ $promoParts['suffix'] }}</span>
+                            <!-- Promo Price Row -->
+                            <div class="flex items-start select-none">
+                                <span class="text-black font-normal" style="font-size: 20pt; margin-top: 8px; margin-right: 2px; line-height: 1;">Rp</span>
+                                <div class="flex items-start text-[#dc2626] font-bold">
+                                    <span style="font-size: 130pt; line-height: 0.8; letter-spacing: -2px;">{{ $promoParts['base'] }}</span>
+                                    <span style="font-size: 100pt; line-height: 0.8; margin-top: 1px;">{{ $promoParts['suffix'] }}</span>
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -436,10 +526,10 @@ new class extends Component
                         <div class="flex flex-col items-center w-full">
                             <div class="flex items-center text-[#dc2626] font-bold" style="line-height: 1;">
                                 @if($pq['additional_data']['has_sd'] ?? false)
-                                    <span class="text-black font-bold uppercase mr-1.5" style="font-size: 24px;">S/D</span>
+                                    <span class="text-black font-bold uppercase mr-1.5" style="font-size: 37.5pt;">S/D</span>
                                 @endif
-                                <span style="font-size: 110px; line-height: 0.8; letter-spacing: -2px;">{{ $pq['additional_data']['discount_percent'] ?? '60' }}</span>
-                                <span style="font-size: 50px; margin-left: 2px;">%</span>
+                                <span style="font-size: 210pt; line-height: 0.8; letter-spacing: -3px;">{{ $pq['additional_data']['discount_percent'] ?? '50' }}</span>
+                                <span style="font-size: 37.5pt; margin-left: 2px;">%</span>
                             </div>
                             
                             <!-- Bottom Comparative List -->
@@ -452,28 +542,28 @@ new class extends Component
                             <div class="w-full border-t border-slate-300 mt-2 pt-2 text-black">
                                 <div class="grid grid-cols-2 gap-2 text-center">
                                     <div class="flex flex-col items-center">
-                                        <span class="text-[10px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($pq['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                        <div class="coret-diagonal-preview text-xs text-slate-500 font-semibold mb-0.5">
+                                        <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($pq['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
+                                        <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
                                             <span>Rp</span>
                                             <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
                                         </div>
-                                        <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 14px;">
-                                            <span class="text-[8px] mt-0.5 mr-0.5">Rp</span>
+                                        <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
+                                            <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
                                             <span>{{ $item1P['base'] }}</span>
-                                            <span class="text-[9px] mt-0.5">{{ $item1P['suffix'] }}</span>
+                                            <span class="text-[13px] mt-0.5">{{ $item1P['suffix'] }}</span>
                                         </div>
                                     </div>
                                     
                                     <div class="flex flex-col items-center border-l border-slate-200">
-                                        <span class="text-[10px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($pq['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                        <div class="coret-diagonal-preview text-xs text-slate-500 font-semibold mb-0.5">
+                                        <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($pq['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
+                                        <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
                                             <span>Rp</span>
                                             <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
                                         </div>
-                                        <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 14px;">
-                                            <span class="text-[8px] mt-0.5 mr-0.5">Rp</span>
+                                        <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
+                                            <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
                                             <span>{{ $item2P['base'] }}</span>
-                                            <span class="text-[9px] mt-0.5">{{ $item2P['suffix'] }}</span>
+                                            <span class="text-[13px] mt-0.5">{{ $item2P['suffix'] }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -492,35 +582,35 @@ new class extends Component
                         <div class="w-full flex flex-col gap-2 py-1">
                             <div class="w-full flex justify-between items-center border-b border-dashed border-slate-300 pb-1.5">
                                 <div class="text-left flex flex-col">
-                                    <span class="text-xs font-bold text-slate-800">{{ strtoupper($pq['additional_data']['item1_name'] ?? '') }}</span>
+                                    <span class="text-sm font-bold text-slate-800">{{ strtoupper($pq['additional_data']['item1_name'] ?? '') }}</span>
                                     @if(!empty($pq['additional_data']['item1_old_price']))
-                                        <div class="coret-diagonal-preview text-[10px] text-slate-500 font-medium align-self-start mt-0.5">
+                                        <div class="coret-diagonal-preview text-xs text-slate-500 font-medium align-self-start mt-0.5">
                                             <span>Rp</span>
                                             <span>{{ $i1O['base'] . $i1O['suffix'] }}</span>
                                         </div>
                                     @endif
                                 </div>
                                 <div class="text-[#dc2626] font-bold flex items-start">
-                                    <span class="text-[9px] mt-0.5 mr-0.5">Rp</span>
-                                    <span class="text-xl leading-none">{{ $i1P['base'] }}</span>
-                                    <span class="text-[10px] leading-none font-bold mt-0.5">{{ $i1P['suffix'] }}</span>
+                                    <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
+                                    <span class="text-2xl leading-none">{{ $i1P['base'] }}</span>
+                                    <span class="text-sm leading-none font-bold mt-0.5">{{ $i1P['suffix'] }}</span>
                                 </div>
                             </div>
                             
                             <div class="w-full flex justify-between items-center pt-1">
                                 <div class="text-left flex flex-col">
-                                    <span class="text-xs font-bold text-slate-800">{{ strtoupper($pq['additional_data']['item2_name'] ?? '') }}</span>
+                                    <span class="text-sm font-bold text-slate-800">{{ strtoupper($pq['additional_data']['item2_name'] ?? '') }}</span>
                                     @if(!empty($pq['additional_data']['item2_old_price']))
-                                        <div class="coret-diagonal-preview text-[10px] text-slate-500 font-medium align-self-start mt-0.5">
+                                        <div class="coret-diagonal-preview text-xs text-slate-500 font-medium align-self-start mt-0.5">
                                             <span>Rp</span>
                                             <span>{{ $i2O['base'] . $i2O['suffix'] }}</span>
                                         </div>
                                     @endif
                                 </div>
                                 <div class="text-[#dc2626] font-bold flex items-start">
-                                    <span class="text-[9px] mt-0.5 mr-0.5">Rp</span>
-                                    <span class="text-xl leading-none">{{ $i2P['base'] }}</span>
-                                    <span class="text-[10px] leading-none font-bold mt-0.5">{{ $i2P['suffix'] }}</span>
+                                    <span class="text-[10px] mt-0.5 mr-0.5">Rp</span>
+                                    <span class="text-2xl leading-none">{{ $i2P['base'] }}</span>
+                                    <span class="text-sm leading-none font-bold mt-0.5">{{ $i2P['suffix'] }}</span>
                                 </div>
                             </div>
                         </div>
