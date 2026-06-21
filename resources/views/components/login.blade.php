@@ -28,6 +28,37 @@ new class extends Component
 };
 ?>
 
+<style>
+    /* Mobile-first styles (max-width: 1023px) */
+    @media (max-width: 1023px) {
+        .login-right-panel {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%) !important;
+        }
+        .login-card {
+            background: rgba(255, 255, 255, 0.94) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.25) !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+            border-radius: 1.5rem !important;
+            padding: 2.5rem 1.75rem !important;
+        }
+    }
+    
+    /* Desktop styles (min-width: 1024px) */
+    @media (min-width: 1024px) {
+        .login-right-panel {
+            background: #f8fafc !important;
+        }
+        .login-card {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+    }
+</style>
+
 <div class="min-h-screen flex" x-data="{ showPass: false }">
 
     {{-- ===================== LEFT PANEL (Illustration) ===================== --}}
@@ -109,10 +140,20 @@ new class extends Component
     </div>
 
     {{-- ===================== RIGHT PANEL (Form Login) ===================== --}}
-    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12"
+    <div class="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 relative overflow-hidden login-right-panel"
          style="background: #f8fafc;">
 
-        <div class="w-full max-w-md">
+        {{-- Background decorative elements for mobile view --}}
+        <div class="absolute inset-0 overflow-hidden pointer-events-none lg:hidden">
+            <div class="absolute -top-24 -left-24 w-72 h-72 rounded-full opacity-20"
+                 style="background: radial-gradient(circle, #6366f1, transparent); filter: blur(40px);"></div>
+            <div class="absolute -bottom-32 -right-32 w-80 h-80 rounded-full opacity-20"
+                 style="background: radial-gradient(circle, #a855f7, transparent); filter: blur(40px);"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full opacity-10"
+                 style="background: radial-gradient(circle, #ec4899, transparent); filter: blur(60px);"></div>
+        </div>
+
+        <div class="w-full max-w-md login-card z-10">
 
             {{-- Mobile brand (only on small screens) --}}
             <div class="flex items-center gap-3 mb-10 lg:hidden">
