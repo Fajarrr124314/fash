@@ -101,17 +101,18 @@ new class extends Component
 
         .coret-diagonal-preview {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
         }
         .coret-diagonal-preview::after {
             content: "";
             position: absolute;
-            left: -3%;
-            right: -3%;
-            top: 50%;
-            height: 3px;
+            left: -5%;
+            right: -5%;
+            top: 48%;
+            height: 4px;
             background-color: #000000 !important;
-            transform: rotate(-6deg);
+            transform: rotate(-12deg);
+            z-index: 1;
         }
         
         .pop-card-a5 {
@@ -292,46 +293,44 @@ new class extends Component
                             <span style="font-size:40pt;font-weight:700;line-height:1;letter-spacing:-0.5px;color:white;font-family:'Arial Narrow',Arial,sans-serif;">{{ $activePreviewPop['header_text'] ?: 'HARGA SPESIAL' }}</span>
                         </div>
 
-                       <!-- Content Body -->
-                       <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
-                           <!-- Brand Block -->
-                           <div>
-                               <div class="brand-name-a5">{{ $activePreviewPop['brand_name'] }}</div>
-                               <div class="product-desc-a5">{{ $activePreviewPop['product_desc'] }}</div>
-                           </div>
+                        <!-- Content Body -->
+                        <div class="flex-grow flex flex-col justify-between leading-none" style="padding:8px 18px 0px 18px;">
+                            <!-- Brand Block -->
+                            <div style="text-align:center;">
+                                <div style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $activePreviewPop['brand_name'] }}</div>
+                            </div>
 
-                           <!-- Price Area -->
-                           <div class="price-area-a5">
-                               @php
-                                   $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
-                                   $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
-                               @endphp
-                               <div class="flex flex-col items-center justify-center gap-1 my-1">
-                                   <!-- Old Price Row (Coret) -->
-                                   <div class="flex items-start select-none relative">
-                                       <span class="old-price-rp-a5">Rp</span>
-                                       <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
-                                           <span class="old-price-base-a5">{{ $oldParts['base'] }}</span>
-                                           <span class="old-price-suffix-a5">{{ $oldParts['suffix'] }}</span>
-                                       </div>
-                                   </div>
-                                   <!-- Promo Price Row -->
-                                   <div class="flex items-start select-none">
-                                       <span class="promo-price-rp-a5">Rp</span>
-                                       <div class="flex items-start text-[#dc2626] font-bold">
-                                           <span class="promo-price-base-a5">{{ $promoParts['base'] }}</span>
-                                           <span class="promo-price-suffix-a5">{{ $promoParts['suffix'] }}</span>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                        <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-                        </div>
-                           <div class="h-2"></div>
-                       </div>
-                  </div>
+                            <!-- Price Area -->
+                            <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;">
+                                @php
+                                    $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
+                                    $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
+                                @endphp
+                                <div style="display:flex;flex-direction:column;align-items:center;">
+                                    <!-- Was Price (Harga Coret) -->
+                                    <div style="display:flex;align-items:flex-start;position:relative;">
+                                        <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:72pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
+                                            <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
+                                        </div>
+                                    </div>
+                                    <!-- Promo Price (Harga Baru) -->
+                                    <div style="display:flex;align-items:flex-start;margin-top:-10px;">
+                                        <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
+                                            <span style="font-size:56pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>
+                         <!-- Footer Image -->
+                         <div style="text-align:center;padding-bottom:8px;padding-top:4px;line-height:0;flex-shrink:0;">
+                             <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height:18px;width:auto;display:inline-block;object-fit:contain;">
+                         </div>
+                   </div>
               @endif
           </div>
 
