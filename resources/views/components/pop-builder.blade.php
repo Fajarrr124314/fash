@@ -38,14 +38,39 @@ new class extends Component
         openA5: true,
         openA4: true,
         openA3: true,
-        notification: { show: false, message: '', type: 'success' }
+        notification: { show: false, message: '', type: 'success' },
+        confirmModal: {
+            show: false,
+            title: '',
+            message: '',
+            icon: 'delete',
+            confirmLabel: 'Ya, Hapus',
+            confirmClass: 'bg-red-600 hover:bg-red-700',
+            action: null
+        },
+        openConfirm(opts) {
+            this.confirmModal.title = opts.title || 'Konfirmasi';
+            this.confirmModal.message = opts.message || 'Apakah Anda yakin?';
+            this.confirmModal.icon = opts.icon || 'delete';
+            this.confirmModal.confirmLabel = opts.confirmLabel || 'Ya, Lanjutkan';
+            this.confirmModal.confirmClass = opts.confirmClass || 'bg-red-600 hover:bg-red-700';
+            this.confirmModal.action = opts.action;
+            this.confirmModal.show = true;
+        },
+        runConfirm() {
+            if (typeof this.confirmModal.action === 'function') {
+                this.confirmModal.action();
+            }
+            this.confirmModal.show = false;
+        }
      }"
      x-on:notify.window="
         notification.show = true; 
         notification.message = $event.detail[0].message; 
         notification.type = $event.detail[0].type; 
         setTimeout(() => notification.show = false, 3000);
-     ">
+     "
+     x-on:request-confirm.window="openConfirm($event.detail)">
 
     <!-- MOBILE HEADER NAVIGATION BAR (no-print) -->
     <header class="no-print h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between lg:hidden shrink-0 z-30">
@@ -295,7 +320,14 @@ new class extends Component
         <!-- Logout Trigger -->
         <div class="pt-4 border-t border-slate-200/50 shrink-0">
             <button type="button" 
-                    wire:click="logout"
+                    @click="openConfirm({
+                        title: 'Keluar Aplikasi',
+                        message: 'Apakah Anda yakin ingin keluar dari aplikasi?',
+                        icon: 'logout',
+                        confirmLabel: 'Ya, Keluar',
+                        confirmClass: 'bg-red-600 hover:bg-red-700',
+                        action: () => $wire.logout()
+                    })"
                     class="w-full flex items-center rounded-xl text-base font-light text-red-500 hover:bg-red-50 transition-all duration-200 hover:translate-x-1.5"
                     :class="sidebarCollapsed ? 'justify-center px-3 py-2.5' : 'px-3 py-2.5 gap-3'"
                     title="Keluar Aplikasi">
@@ -393,5 +425,72 @@ new class extends Component
                 <livewire:profile />
             @endif
         </div>
+
+    <!-- ============================================================ -->
+    <!-- GLOBAL CONFIRMATION MODAL -->
+    <!-- ============================================================ -->
+    <div
+        x-show="confirmModal.show"
+        x-transition:enter="ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print"
+        style="display: none;"
+        @keydown.escape.window="confirmModal.show = false">
+
+        <div
+            x-show="confirmModal.show"
+            x-transition:enter="ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 flex flex-col gap-5">
+
+            <!-- Icon + Title -->
+            <div class="flex flex-col items-center gap-3 text-center">
+                <!-- Delete Icon -->
+                <template x-if="confirmModal.icon === 'delete'">
+                    <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                    </div>
+                </template>
+                <!-- Logout Icon -->
+                <template x-if="confirmModal.icon === 'logout'">
+                    <div class="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                    </div>
+                </template>
+
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-800" x-text="confirmModal.title"></h3>
+                    <p class="text-xs text-slate-500 mt-1 font-medium" x-text="confirmModal.message"></p>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button type="button"
+                    @click="confirmModal.show = false"
+                    class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-4 rounded-xl text-sm transition duration-150">
+                    Batal
+                </button>
+                <button type="button"
+                    @click="runConfirm()"
+                    :class="confirmModal.confirmClass"
+                    class="flex-1 text-white font-bold py-2.5 px-4 rounded-xl text-sm transition duration-150 shadow-sm"
+                    x-text="confirmModal.confirmLabel">
+                </button>
+            </div>
+        </div>
+    </div>
 
 </div>
