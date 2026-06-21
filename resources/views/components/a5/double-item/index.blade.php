@@ -21,6 +21,9 @@ new class extends Component
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
+    public $showDescription = true;
+    public $showStartingFrom = false;
+    public $showSd = false;
     
     // Double Item specific fields
     public $item1Name = '';
@@ -87,6 +90,9 @@ new class extends Component
             $this->item2Name = $add['item2_name'] ?? '';
             $this->item2Price = $add['item2_price'] ?? '';
             $this->item2OldPrice = $add['item2_old_price'] ?? '';
+            $this->showDescription = isset($add['show_description']) ? (bool)$add['show_description'] : true;
+            $this->showSd = isset($add['show_sd']) ? (bool)$add['show_sd'] : false;
+            $this->showStartingFrom = (bool)$pop->show_starting_from;
             
             $this->formTitle = 'Edit POP A5 Double Items';
             $this->showForm = true;
@@ -107,6 +113,9 @@ new class extends Component
         $this->item2Name = '';
         $this->item2Price = '';
         $this->item2OldPrice = '';
+        $this->showDescription = true;
+        $this->showStartingFrom = false;
+        $this->showSd = false;
     }
 
     public function save()
@@ -141,7 +150,10 @@ new class extends Component
                 'item2_name' => $this->item2Name,
                 'item2_price' => $this->item2Price,
                 'item2_old_price' => $this->item2OldPrice,
-            ]
+                'show_description' => $this->showDescription,
+                'show_sd' => $this->showSd,
+            ],
+            'show_starting_from' => $this->showStartingFrom,
         ];
 
         if ($this->popId) {
@@ -359,7 +371,23 @@ new class extends Component
                                 </td>
                                 
                                 <td class="py-3 px-4">
-                                    <span class="font-bold text-slate-900 uppercase text-[13px]">{{ $pop['brand_name'] }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-slate-900 uppercase text-[13px]">{{ $pop['brand_name'] }}</span>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                            @if(isset($pop['additional_data']['show_description']) && !$pop['additional_data']['show_description'])
+                                                <span class="bg-slate-100 text-slate-500 px-1 py-0.2 rounded text-[9px] font-bold">Tanpa Deskripsi</span>
+                                            @else
+                                                <span class="bg-indigo-50 text-indigo-600 px-1 py-0.2 rounded text-[9px] font-bold">Pake Deskripsi</span>
+                                            @endif
+                                            @if(!empty($pop['show_starting_from']))
+                                                <span class="bg-amber-50 text-amber-700 px-1 py-0.2 rounded text-[9px] font-bold">Mulai Dari</span>
+                                            @endif
+                                            @if(!empty($pop['additional_data']['show_sd']))
+                                                <span class="bg-emerald-50 text-emerald-700 px-1 py-0.2 rounded text-[9px] font-bold">S/D</span>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </td>
                                 
                                 <td class="py-3 px-4">
@@ -430,6 +458,11 @@ new class extends Component
                           </div>
 
                           <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
+                              <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                          </div>
+
+                          <div>
                               <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
                               <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
                               @error('unit')
@@ -448,6 +481,41 @@ new class extends Component
                               @error('qtyPrint')
                                   <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                               @enderror
+                          </div>
+
+                          {{-- Toggles --}}
+                          <div class="border-t border-slate-100 pt-3 space-y-3">
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Opsi Tampilan</label>
+                              
+                              <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                  <div class="relative">
+                                      <input type="checkbox" wire:model.live="showDescription" id="showDescription" class="sr-only peer">
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs font-bold text-slate-700">Tampilkan Deskripsi</span>
+                                  </div>
+                              </label>
+
+                              <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                  <div class="relative">
+                                      <input type="checkbox" wire:model.live="showStartingFrom" id="showStartingFrom" class="sr-only peer">
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs font-bold text-slate-700">Tampilkan "mulai dari"</span>
+                                  </div>
+                              </label>
+
+                              <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                  <div class="relative">
+                                      <input type="checkbox" wire:model.live="showSd" id="showSd" class="sr-only peer">
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs font-bold text-slate-700">Tampilkan "s/d"</span>
+                                  </div>
+                              </label>
                           </div>
                       </div>
 

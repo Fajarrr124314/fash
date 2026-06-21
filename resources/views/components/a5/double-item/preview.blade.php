@@ -308,53 +308,79 @@ new class extends Component
 
                        <!-- Content Body -->
                        <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
-                           <!-- Brand Block -->
-                           <div>
-                               <div class="brand-name-a5">{{ $activePreviewPop['brand_name'] }}</div>
-                           </div>
+                            <!-- Brand Block -->
+                            <div style="text-align:center;">
+                                <div class="brand-name-a5" style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $activePreviewPop['brand_name'] }}</div>
+                                @if(empty($activePreviewPop['additional_data']) || !isset($activePreviewPop['additional_data']['show_description']) || $activePreviewPop['additional_data']['show_description'])
+                                    @if(!empty($activePreviewPop['product_desc']))
+                                        <div style="font-size:18pt;font-weight:400;text-transform:uppercase;color:#000000ff;line-height:1.2;margin-top: -2px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $activePreviewPop['product_desc'] }}</div>
+                                    @endif
+                                @endif
+                            </div>
 
-                           <!-- Price Area -->
-                           <div class="price-area-a5">
-                               @php
-                                   $i1O = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_old_price'] ?? '');
-                                   $i1P = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_price'] ?? '');
-                                   $i2O = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_old_price'] ?? '');
-                                   $i2P = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_price'] ?? '');
-                               @endphp
-                               <div class="double-container-a5">
-                                   <div class="double-row-a5 double-row-border-a5">
-                                       <div class="double-left-a5">
-                                           <span class="double-name-a5">{{ $activePreviewPop['additional_data']['item1_name'] ?? '' }}</span>
-                                           @if(!empty($activePreviewPop['additional_data']['item1_old_price']))
-                                               <span class="double-was-a5 select-none"><span class="coret-diagonal-preview">Rp {{ $i1O['base'] . $i1O['suffix'] }}</span></span>
-                                           @endif
-                                       </div>
-                                       <div class="double-right-a5">
-                                           <span class="double-rp-a5">Rp</span>
-                                           <span class="double-price-base-a5">{{ $i1P['base'] }}</span>
-                                           <span class="double-price-suffix-a5">{{ $i1P['suffix'] }}</span>
-                                       </div>
-                                   </div>
-                                   <div class="double-row-a5">
-                                       <div class="double-left-a5">
-                                           <span class="double-name-a5">{{ $activePreviewPop['additional_data']['item2_name'] ?? '' }}</span>
-                                           @if(!empty($activePreviewPop['additional_data']['item2_old_price']))
-                                               <span class="double-was-a5 select-none"><span class="coret-diagonal-preview">Rp {{ $i2O['base'] . $i2O['suffix'] }}</span></span>
-                                           @endif
-                                       </div>
-                                       <div class="double-right-a5">
-                                           <span class="double-rp-a5">Rp</span>
-                                           <span class="double-price-base-a5">{{ $i2P['base'] }}</span>
-                                           <span class="double-price-suffix-a5">{{ $i2P['suffix'] }}</span>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
+                            <!-- Price Area -->
+                            <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;width:100%;margin-top:2px;margin-bottom:2px;">
+                                @php
+                                    $i1O = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_old_price'] ?? '');
+                                    $i1P = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_price'] ?? '');
+                                    $i2O = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_old_price'] ?? '');
+                                    $i2P = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_price'] ?? '');
+                                @endphp
+                                <div style="display:flex;flex-direction:column;align-items:center;width:100%;gap:4px;">
+                                    @if(!empty($activePreviewPop['show_starting_from']))
+                                        <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                    @endif
+
+                                    <!-- Row 1 -->
+                                    <div style="display:flex;align-items:center;justify-content:space-between;width:82%;margin:0 auto;line-height:1;">
+                                        <!-- Old Price 1 -->
+                                        <div style="display:flex;align-items:flex-start;position:relative;">
+                                            <span style="font-size:14pt;font-weight:400;color:#000;margin-top:4px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                            <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                                <span style="font-size:44pt;font-weight:700;line-height:0.8;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1O['base'] }}</span>
+                                                <span style="font-size:26pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1O['suffix'] }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- Promo Price 1 -->
+                                        <div style="display:flex;align-items:flex-start;">
+                                            <span style="font-size:18pt;font-weight:400;color:#000;margin-top:6px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                            <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                                <span style="font-size:64pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1P['base'] }}</span>
+                                                <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1P['suffix'] }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Optional S/D -->
+                                    @if(!empty($activePreviewPop['additional_data']['show_sd']))
+                                        <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-top:0px;margin-bottom:0px;font-family:'Arial Narrow',Arial,sans-serif;">s/d</div>
+                                    @endif
+
+                                    <!-- Row 2 -->
+                                    <div style="display:flex;align-items:center;justify-content:space-between;width:82%;margin:0 auto;line-height:1;">
+                                        <!-- Old Price 2 -->
+                                        <div style="display:flex;align-items:flex-start;position:relative;">
+                                            <span style="font-size:14pt;font-weight:400;color:#000;margin-top:4px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                            <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                                <span style="font-size:44pt;font-weight:700;line-height:0.8;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2O['base'] }}</span>
+                                                <span style="font-size:26pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2O['suffix'] }}</span>
+                                            </div>
+                                        </div>
+                                        <!-- Promo Price 2 -->
+                                        <div style="display:flex;align-items:flex-start;">
+                                            <span style="font-size:18pt;font-weight:400;color:#000;margin-top:6px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                            <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                                <span style="font-size:64pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2P['base'] }}</span>
+                                                <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2P['suffix'] }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                        <div style="text-align:center; padding-bottom: 8px; padding-top: 4px; line-height:0;">
                             <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                         </div>
-                           <div class="h-2"></div>
                        </div>
                   </div>
               @endif
@@ -436,10 +462,15 @@ window.printA5DoubleItem = function() {
                     </div>
 
                     <!-- Content Body -->
-                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:12px 20px 8px 20px;line-height:none;">
+                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:8px 18px 0px 18px;line-height:none;">
                         <!-- Brand Block -->
-                        <div>
-                            <div style="font-size:46pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;margin-top:8px;letter-spacing:-0.5px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['brand_name'] }}</div>
+                        <div style="text-align:center;">
+                            <div style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $pq['brand_name'] }}</div>
+                            @if(empty($pq['additional_data']) || !isset($pq['additional_data']['show_description']) || $pq['additional_data']['show_description'])
+                                @if(!empty($pq['product_desc']))
+                                    <div style="font-size:18pt;font-weight:400;text-transform:uppercase;color:#000000ff;line-height:1.2;margin-top: -2px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['product_desc'] }}</div>
+                                @endif
+                            @endif
                         </div>
 
                         <!-- Price Area -->
@@ -450,31 +481,53 @@ window.printA5DoubleItem = function() {
                                 $i2O = $this->formatPriceStatic($pq['additional_data']['item2_old_price'] ?? '');
                                 $i2P = $this->formatPriceStatic($pq['additional_data']['item2_price'] ?? '');
                             @endphp
-                            <div class="double-container-a5">
-                                <div class="double-row-a5 double-row-border-a5">
-                                    <div class="double-left-a5">
-                                        <span class="double-name-a5">{{ $pq['additional_data']['item1_name'] ?? '' }}</span>
-                                        @if(!empty($pq['additional_data']['item1_old_price']))
-                                            <span class="double-was-a5 select-none"><span class="coret-diagonal-preview">Rp {{ $i1O['base'] . $i1O['suffix'] }}</span></span>
-                                        @endif
+                            <div style="display:flex;flex-direction:column;align-items:center;width:100%;gap:4px;">
+                                @if(!empty($pq['show_starting_from']))
+                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:2px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                @endif
+
+                                <!-- Row 1 -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;width:82%;margin:0 auto;line-height:1;">
+                                    <!-- Old Price 1 -->
+                                    <div style="display:flex;align-items:flex-start;position:relative;">
+                                        <span style="font-size:14pt;font-weight:400;color:#000;margin-top:4px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:44pt;font-weight:700;line-height:0.8;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1O['base'] }}</span>
+                                            <span style="font-size:26pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1O['suffix'] }}</span>
+                                        </div>
                                     </div>
-                                    <div class="double-right-a5">
-                                        <span class="double-rp-a5">Rp</span>
-                                        <span class="double-price-base-a5">{{ $i1P['base'] }}</span>
-                                        <span class="double-price-suffix-a5">{{ $i1P['suffix'] }}</span>
+                                    <!-- Promo Price 1 -->
+                                    <div style="display:flex;align-items:flex-start;">
+                                        <span style="font-size:18pt;font-weight:400;color:#000;margin-top:6px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:64pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1P['base'] }}</span>
+                                            <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i1P['suffix'] }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="double-row-a5">
-                                    <div class="double-left-a5">
-                                        <span class="double-name-a5">{{ $pq['additional_data']['item2_name'] ?? '' }}</span>
-                                        @if(!empty($pq['additional_data']['item2_old_price']))
-                                            <span class="double-was-a5 select-none"><span class="coret-diagonal-preview">Rp {{ $i2O['base'] . $i2O['suffix'] }}</span></span>
-                                        @endif
+
+                                <!-- Optional S/D -->
+                                @if(!empty($pq['additional_data']['show_sd']))
+                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-top:0px;margin-bottom:0px;font-family:'Arial Narrow',Arial,sans-serif;">s/d</div>
+                                @endif
+
+                                <!-- Row 2 -->
+                                <div style="display:flex;align-items:center;justify-content:space-between;width:82%;margin:0 auto;line-height:1;">
+                                    <!-- Old Price 2 -->
+                                    <div style="display:flex;align-items:flex-start;position:relative;">
+                                        <span style="font-size:14pt;font-weight:400;color:#000;margin-top:4px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:44pt;font-weight:700;line-height:0.8;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2O['base'] }}</span>
+                                            <span style="font-size:26pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2O['suffix'] }}</span>
+                                        </div>
                                     </div>
-                                    <div class="double-right-a5">
-                                        <span class="double-rp-a5">Rp</span>
-                                        <span class="double-price-base-a5">{{ $i2P['base'] }}</span>
-                                        <span class="double-price-suffix-a5">{{ $i2P['suffix'] }}</span>
+                                    <!-- Promo Price 2 -->
+                                    <div style="display:flex;align-items:flex-start;">
+                                        <span style="font-size:18pt;font-weight:400;color:#000;margin-top:6px;margin-right:2px;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                        <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                            <span style="font-size:64pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2P['base'] }}</span>
+                                            <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $i2P['suffix'] }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
