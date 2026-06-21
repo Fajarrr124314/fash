@@ -299,6 +299,11 @@ new class extends Component
                             <!-- Brand Block -->
                             <div style="text-align:center;">
                                 <div style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $activePreviewPop['brand_name'] }}</div>
+                                @if(empty($activePreviewPop['additional_data']) || !isset($activePreviewPop['additional_data']['show_description']) || $activePreviewPop['additional_data']['show_description'])
+                                    @if(!empty($activePreviewPop['product_desc']))
+                                        <div style="font-size:18pt;font-weight:400;text-transform:uppercase;color:#000000ff;line-height:1.2;margin-top: -2px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $activePreviewPop['product_desc'] }}</div>
+                                    @endif
+                                @endif
                             </div>
 
                             <!-- Price Area -->
@@ -308,6 +313,9 @@ new class extends Component
                                     $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
                                 @endphp
                                 <div style="display:flex;flex-direction:column;align-items:center;">
+                                    @if(!empty($activePreviewPop['show_starting_from']))
+                                        <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:4px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                    @endif
                                     <!-- Was Price (Harga Coret) -->
                                     <div style="display:flex;align-items:flex-start;position:relative;">
                                         <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
@@ -317,7 +325,7 @@ new class extends Component
                                         </div>
                                     </div>
                                     <!-- Promo Price (Harga Baru) -->
-                                    <div style="display:flex;align-items:flex-start;margin-top:-10px;">
+                                    <div style="display:flex;align-items:flex-start;margin-top:4px;">
                                         <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                         <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
                                             <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
@@ -409,11 +417,19 @@ window.printA5WasIsPrice = function() {
                         <!-- Brand Block -->
                         <div style="text-align:center;">
                             <div style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $pq['brand_name'] }}</div>
+                            @if(empty($pq['additional_data']) || !isset($pq['additional_data']['show_description']) || $pq['additional_data']['show_description'])
+                                @if(!empty($pq['product_desc']))
+                                    <div style="font-size:18pt;font-weight:400;text-transform:uppercase;color:#000000ff;line-height:1.2;margin-top: -2px;text-align:center;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['product_desc'] }}</div>
+                                @endif
+                            @endif
                         </div>
 
                         <!-- Price Area -->
                         <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;">
                             <div style="display:flex;flex-direction:column;align-items:center;">
+                                @if(!empty($pq['show_starting_from']))
+                                    <div style="font-size:15pt;font-weight:300;text-transform:uppercase;color:#000;text-align:center;letter-spacing:0.5px;line-height:1;margin-bottom:4px;font-family:'Arial Narrow',Arial,sans-serif;">mulai dari</div>
+                                @endif
                                 <!-- Was Price (Harga Coret) -->
                                 <div style="display:flex;align-items:flex-start;position:relative;">
                                     <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
@@ -423,7 +439,7 @@ window.printA5WasIsPrice = function() {
                                     </div>
                                 </div>
                                 <!-- Promo Price (Harga Baru) -->
-                                <div style="display:flex;align-items:flex-start;margin-top:-10px;">
+                                <div style="display:flex;align-items:flex-start;margin-top:4px;">
                                     <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
                                     <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
                                         <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>

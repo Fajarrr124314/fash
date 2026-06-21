@@ -23,6 +23,8 @@ new class extends Component
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
+    public $showDescription = true;
+    public $showStartingFrom = false;
 
     public function mount()
     {
@@ -75,6 +77,8 @@ new class extends Component
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
+            $this->showDescription = isset($pop->additional_data['show_description']) ? (bool)$pop->additional_data['show_description'] : true;
+            $this->showStartingFrom = (bool)$pop->show_starting_from;
             
             $this->formTitle = 'Edit POP A5 Was/Is Price';
             $this->showForm = true;
@@ -91,6 +95,8 @@ new class extends Component
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
+        $this->showDescription = true;
+        $this->showStartingFrom = false;
     }
 
     public function save()
@@ -118,7 +124,10 @@ new class extends Component
             'secondary_price' => $this->secondaryPrice,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => [
+                'show_description' => $this->showDescription,
+            ],
+            'show_starting_from' => $this->showStartingFrom,
         ];
 
         if ($this->popId) {
@@ -355,7 +364,17 @@ new class extends Component
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col">
                                         <span class="font-bold text-slate-900 uppercase text-[13px]">{{ $pop['brand_name'] }}</span>
-                                        <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                        <div class="flex items-center gap-1.5 mt-0.5">
+                                            <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                            @if(isset($pop['additional_data']['show_description']) && !$pop['additional_data']['show_description'])
+                                                <span class="bg-slate-100 text-slate-500 px-1 py-0.2 rounded text-[9px] font-bold">Tanpa Deskripsi</span>
+                                            @else
+                                                <span class="bg-indigo-50 text-indigo-600 px-1 py-0.2 rounded text-[9px] font-bold">Pake Deskripsi</span>
+                                            @endif
+                                            @if(!empty($pop['show_starting_from']))
+                                                <span class="bg-amber-50 text-amber-700 px-1 py-0.2 rounded text-[9px] font-bold">Mulai Dari</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </td>
                                 
@@ -459,6 +478,36 @@ new class extends Component
                           @error('qtyPrint')
                               <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                           @enderror
+                      </div>
+
+                      {{-- Tampilkan Deskripsi Toggle --}}
+                      <div class="md:col-span-2 border-t border-slate-100 pt-3">
+                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Opsi Deskripsi</label>
+                          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                              <div class="relative">
+                                  <input type="checkbox" wire:model.live="showDescription" id="showDescription" class="sr-only peer">
+                                  <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                              </div>
+                              <div>
+                                  <span class="text-sm font-bold text-slate-700">Tampilkan Deskripsi Produk</span>
+                                  <p class="text-xs text-slate-400 font-medium mt-0.5">Jika aktif, deskripsi produk akan muncul di bawah merek/brand</p>
+                              </div>
+                          </label>
+                      </div>
+
+                      {{-- Mulai Dari Toggle --}}
+                      <div class="md:col-span-2 border-t border-slate-100 pt-3">
+                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Label Harga</label>
+                          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                              <div class="relative">
+                                  <input type="checkbox" wire:model.live="showStartingFrom" id="showStartingFrom" class="sr-only peer">
+                                  <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                              </div>
+                              <div>
+                                  <span class="text-sm font-bold text-slate-700">Tampilkan tulisan "mulai dari"</span>
+                                  <p class="text-xs text-slate-400 font-medium mt-0.5">Jika aktif, teks <em>mulai dari</em> akan muncul di atas harga pada preview &amp; cetak</p>
+                              </div>
+                          </label>
                       </div>
                   </div>
 
