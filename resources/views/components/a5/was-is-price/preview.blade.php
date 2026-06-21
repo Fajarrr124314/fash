@@ -20,7 +20,8 @@ new class extends Component
         $pop = Pop::find($id);
         if ($pop && $pop->frame_size === 'A5' && $pop->layout_type === 'was_is_price') {
             $this->activePreviewPop = $pop->toArray();
-            $this->previewQueue = [$this->activePreviewPop];
+            $qty = max(1, (int)($pop->qty_print ?? 1));
+            $this->previewQueue = array_fill(0, $qty, $this->activePreviewPop);
             $this->frameSize = $pop->frame_size;
             $this->showModal = true;
         }
@@ -160,7 +161,7 @@ new class extends Component
             text-transform: uppercase;
             color: black !important;
             line-height: 1;
-            margin-top: -10px;
+            margin-top: 0px;
             letter-spacing: -0.5px;
             text-align: center;
         }
@@ -340,7 +341,7 @@ new class extends Component
                   Tutup
               </button>
               <button type="button" 
-                      @click="window.print();"
+                      @click="window.printA5WasIsPrice()"
                       class="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition duration-150 flex items-center gap-1.5 shadow-md shadow-indigo-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -351,56 +352,94 @@ new class extends Component
      </div>
 </div>
 
-<!-- ==================== PRINT CONTEXT WRAPPER (HIDDEN ON SCREEN) ==================== -->
-<div id="pop-print-area" class="print-only hidden">
-    @foreach($previewQueue as $pq)
-        <div class="pop-card-preview bg-white relative flex flex-col justify-between overflow-hidden print-card-item-modal pop-card-a5"
-             style="width: 148mm; height: 105mm; margin: 0 auto; page-break-after: always; page-break-inside: avoid; border: none; box-shadow: none; box-sizing: border-box; padding: 0px; font-family: 'Arial Narrow', 'Archivo Narrow', Arial, sans-serif;">
-            
-            <!-- Header Banner -->
-            <div class="header-banner-a5">
-                <span>{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
-            </div>
+@script
+<script>
+window.printA5WasIsPrice = function() {
+    var area = document.getElementById('pop-print-area-a5wip');
+    if (!area) { alert('Data print tidak ditemukan.'); return; }
+    var html = area.innerHTML;
+    if (!html.trim()) { alert('Tidak ada data untuk dicetak.'); return; }
 
-            <!-- Content Body -->
-            <div class="flex-grow flex flex-col justify-between py-3 px-5 leading-none">
-                <!-- Brand Block -->
-                <div>
-                    <div class="brand-name-a5">{{ $pq['brand_name'] }}</div>
-                    <div class="product-desc-a5">{{ $pq['product_desc'] }}</div>
-                </div>
+    var win = window.open('', '_blank', 'width=1200,height=900');
+    if (!win) { alert('Popup diblokir browser! Izinkan popup untuk domain ini.'); return; }
+    win.document.open();
+    win.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+        + '<style>'
+        + '@page { size: 297mm 210mm landscape; margin: 0; }'
+        + '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }'
+        + 'body { background: white; font-family: \'Arial Narrow\', Arial, sans-serif; }'
+        + '.coret-diagonal-preview { position: relative; display: inline-flex; }'
+        + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -5%; right: -5%; top: 48%; height: 4px; background-color: #000000 !important; transform: rotate(-12deg); z-index: 1; }'
+        + '</style>'
+        + '</head><body>' + html + '</body></html>'
+    );
+    win.document.close();
+    win.focus();
+    setTimeout(function() {
+        win.print();
+        setTimeout(function() { win.close(); }, 500);
+    }, 400);
+};
+</script>
+@endscript
 
-                <!-- Price Area -->
-                <div class="price-area-a5">
-                    @php
-                        $promoParts = $this->formatPriceStatic($pq['primary_price']);
-                        $oldParts = $this->formatPriceStatic($pq['secondary_price']);
-                    @endphp
-                    <div class="flex flex-col items-center justify-center gap-1 my-1">
-                        <!-- Old Price Row (Coret) -->
-                        <div class="flex items-start select-none relative">
-                            <span class="old-price-rp-a5">Rp</span>
-                            <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
-                                <span class="old-price-base-a5">{{ $oldParts['base'] }}</span>
-                                <span class="old-price-suffix-a5">{{ $oldParts['suffix'] }}</span>
-                            </div>
+<!-- ==================== PRINT DATA AREA (hidden off-screen) ==================== -->
+<div id="pop-print-area-a5wip" style="position:absolute;left:-99999px;top:0;width:297mm;overflow:hidden;">
+    @php
+        $chunks = array_chunk($previewQueue, 4);
+    @endphp
+
+    @foreach($chunks as $chunkIndex => $chunk)
+        <div style="width:297mm;height:210mm;display:grid;grid-template-columns:148mm 149mm;grid-template-rows:105mm 105mm;box-sizing:border-box;{{ !$loop->last ? 'page-break-after:always;break-after:page;' : '' }}">
+            @foreach($chunk as $pq)
+                @php
+                    $promoParts = $this->formatPriceStatic($pq['primary_price']);
+                    $oldParts = $this->formatPriceStatic($pq['secondary_price']);
+                @endphp
+                <div style="width:148mm;height:105mm;box-sizing:border-box;font-family:'Arial Narrow',Arial,sans-serif;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;background-color:white;color:black;border:1px solid #000;padding: 0px;">
+                    
+                    <!-- Header Banner -->
+                    <div style="background-color:#dc2626;color:white;text-align:center;text-transform:uppercase;display:flex;align-items:center;justify-content:center;margin:12px 12px 0 12px;height:75px;min-height:75px;flex-shrink:0;box-sizing:border-box;padding:0 10px;">
+                        <span style="font-size:40pt;font-weight:700;line-height:1;letter-spacing:-0.5px;color:white;font-family:'Arial Narrow',Arial,sans-serif;">{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
+                    </div>
+
+                    <!-- Content Body -->
+                    <div style="flex-grow:1;display:flex;flex-direction:column;justify-content:space-between;padding:8px 18px 0px 18px;line-height:none;">
+                        <!-- Brand Block -->
+                        <div style="text-align:center;">
+                            <div style="font-size:40pt;font-weight:700;text-transform:uppercase;color:black;line-height:1;letter-spacing:-0.5px;font-family:'Arial Narrow',Arial,sans-serif;margin-top:-5px;">{{ $pq['brand_name'] }}</div>
                         </div>
-                        <!-- Promo Price Row -->
-                        <div class="flex items-start select-none">
-                            <span class="promo-price-rp-a5">Rp</span>
-                            <div class="flex items-start text-[#dc2626] font-bold">
-                                <span class="promo-price-base-a5">{{ $promoParts['base'] }}</span>
-                                <span class="promo-price-suffix-a5">{{ $promoParts['suffix'] }}</span>
+
+                        <!-- Price Area -->
+                        <div style="display:flex;align-items:center;justify-content:center;flex-grow:1;">
+                            <div style="display:flex;flex-direction:column;align-items:center;">
+                                <!-- Was Price (Harga Coret) -->
+                                <div style="display:flex;align-items:flex-start;position:relative;">
+                                    <span style="font-size:18pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                    <div class="coret-diagonal-preview" style="display:inline-flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                        <span style="font-size:72pt;font-weight:700;line-height:0.8;letter-spacing:-1px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['base'] }}</span>
+                                        <span style="font-size:36pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $oldParts['suffix'] }}</span>
+                                    </div>
+                                </div>
+                                <!-- Promo Price (Harga Baru) -->
+                                <div style="display:flex;align-items:flex-start;margin-top:-10px;">
+                                    <span style="font-size:20pt;font-weight:400;color:#000;margin-top:8px;margin-right:2px;line-height:1;font-family:'Arial Narrow',Arial,sans-serif;">Rp</span>
+                                    <div style="display:flex;align-items:flex-start;color:#dc2626;font-weight:700;">
+                                        <span style="font-size:96pt;font-weight:700;line-height:0.8;letter-spacing:-2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['base'] }}</span>
+                                        <span style="font-size:56pt;font-weight:700;line-height:0.8;margin-top:2px;font-family:'Arial Narrow',Arial,sans-serif;">{{ $promoParts['suffix'] }}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Footer Image -->
+                    <div style="text-align:center;padding-bottom:8px;padding-top:4px;line-height:0;flex-shrink:0;">
+                        <img src="{{ asset('images/Picture2.bmp') }}" alt="" style="max-height:18px;width:auto;display:inline-block;object-fit:contain;">
+                    </div>
                 </div>
-            <!-- Footer Image -->
-            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-            </div>
-                <div class="h-2"></div>
-            </div>
+            @endforeach
         </div>
     @endforeach
 </div>
