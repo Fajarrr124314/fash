@@ -394,15 +394,4 @@ new class extends Component
             @endif
         </div>
 
-    </main>
-
-    <!-- GLOBAL PRINT SPOOLER COMPONENT -->
-    @if(str_contains($activeView, 'a5-'))
-        <livewire:a5.preview />
-    @elseif(str_contains($activeView, 'a4-'))
-        <livewire:a4.preview />
-    @elseif(str_contains($activeView, 'a3-'))
-        <livewire:a3.preview />
-    @endif
-
 </div>

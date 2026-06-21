@@ -320,7 +320,7 @@ new class extends Component
                                 
                                 <td class="py-3 px-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <!-- Preview 👁 -->
+                                        <!-- Preview -->
                                         <button type="button" 
                                                 wire:click="previewSingle({{ $pop['id'] }})"
                                                 class="text-indigo-600 hover:text-indigo-800 transition p-1 hover:bg-slate-100 rounded"
@@ -497,7 +497,6 @@ new class extends Component
                               </div>
                           </div>
                       </div>
-
                   </div>
 
                   <!-- Footer Buttons -->
@@ -512,4 +511,7 @@ new class extends Component
               </form>
          </div>
     </div>
+
+    <!-- NESTED FEATURE PREVIEW MODAL -->
+    <livewire:a4.discount-percent.preview />
 </div>

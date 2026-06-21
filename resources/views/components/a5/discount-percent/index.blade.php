@@ -12,17 +12,25 @@ new class extends Component
     
     // Form State
     public $showForm = false;
-    public $formTitle = 'Tambah POP A5 Was/Is Price';
+    public $formTitle = 'Tambah POP A5 Discount Percent';
     public $popId = null;
     
     // Form fields
     public $brandName = '';
     public $productDesc = '';
-    public $primaryPrice = '';
-    public $secondaryPrice = '';
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
+    
+    // Discount layout specific fields
+    public $discountPercent = '60';
+    public $hasSd = false;
+    public $item1Name = 'LENGAN PENDEK';
+    public $item1Price = '';
+    public $item1OldPrice = '';
+    public $item2Name = 'LENGAN PANJANG';
+    public $item2Price = '';
+    public $item2OldPrice = '';
 
     public function mount()
     {
@@ -31,7 +39,7 @@ new class extends Component
 
     public function loadPops()
     {
-        $query = Pop::where('frame_size', 'A5')->where('layout_type', 'was_is_price');
+        $query = Pop::where('frame_size', 'A5')->where('layout_type', 'discount_percent');
         if ($this->search) {
             $query->where(function($q) {
                 $q->where('brand_name', 'like', '%'.$this->search.'%')
@@ -58,7 +66,7 @@ new class extends Component
     public function openAddForm()
     {
         $this->resetForm();
-        $this->formTitle = 'Tambah POP A5 Was/Is Price';
+        $this->formTitle = 'Tambah POP A5 Discount Percent';
         $this->showForm = true;
     }
 
@@ -70,13 +78,21 @@ new class extends Component
             $this->popId = $pop->id;
             $this->brandName = $pop->brand_name;
             $this->productDesc = $pop->product_desc;
-            $this->primaryPrice = $pop->primary_price;
-            $this->secondaryPrice = $pop->secondary_price;
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
             
-            $this->formTitle = 'Edit POP A5 Was/Is Price';
+            $add = $pop->additional_data ?? [];
+            $this->discountPercent = $add['discount_percent'] ?? '60';
+            $this->hasSd = $add['has_sd'] ?? false;
+            $this->item1Name = $add['item1_name'] ?? 'LENGAN PENDEK';
+            $this->item1Price = $add['item1_price'] ?? '';
+            $this->item1OldPrice = $add['item1_old_price'] ?? '';
+            $this->item2Name = $add['item2_name'] ?? 'LENGAN PANJANG';
+            $this->item2Price = $add['item2_price'] ?? '';
+            $this->item2OldPrice = $add['item2_old_price'] ?? '';
+            
+            $this->formTitle = 'Edit POP A5 Discount Percent';
             $this->showForm = true;
         }
     }
@@ -86,19 +102,24 @@ new class extends Component
         $this->popId = null;
         $this->brandName = '';
         $this->productDesc = '';
-        $this->primaryPrice = '';
-        $this->secondaryPrice = '';
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
+        $this->discountPercent = '60';
+        $this->hasSd = false;
+        $this->item1Name = 'LENGAN PENDEK';
+        $this->item1Price = '';
+        $this->item1OldPrice = '';
+        $this->item2Name = 'LENGAN PANJANG';
+        $this->item2Price = '';
+        $this->item2OldPrice = '';
     }
 
     public function save()
     {
         $this->validate([
             'brandName' => 'required|string',
-            'primaryPrice' => 'required|string',
-            'secondaryPrice' => 'required|string',
+            'discountPercent' => 'required|string',
             'qtyPrint' => 'required|integer|min:1',
             'unit' => 'required|string',
         ]);
@@ -110,23 +131,32 @@ new class extends Component
             'sku' => $sku,
             'name' => $name,
             'frame_size' => 'A5',
-            'layout_type' => 'was_is_price',
+            'layout_type' => 'discount_percent',
             'header_text' => $this->headerText,
             'brand_name' => $this->brandName,
             'product_desc' => $this->productDesc,
-            'primary_price' => $this->primaryPrice,
-            'secondary_price' => $this->secondaryPrice,
+            'primary_price' => null,
+            'secondary_price' => null,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => [
+                'discount_percent' => $this->discountPercent,
+                'has_sd' => $this->hasSd,
+                'item1_name' => $this->item1Name,
+                'item1_price' => $this->item1Price,
+                'item1_old_price' => $this->item1OldPrice,
+                'item2_name' => $this->item2Name,
+                'item2_price' => $this->item2Price,
+                'item2_old_price' => $this->item2OldPrice,
+            ]
         ];
 
         if ($this->popId) {
             Pop::find($this->popId)->update($data);
-            $msg = 'POP A5 Was/Is Price berhasil diperbarui!';
+            $msg = 'POP A5 Discount Percent berhasil diperbarui!';
         } else {
             Pop::create($data);
-            $msg = 'POP A5 Was/Is Price berhasil ditambahkan!';
+            $msg = 'POP A5 Discount Percent berhasil ditambahkan!';
         }
 
         $this->showForm = false;
@@ -188,23 +218,6 @@ new class extends Component
         }
         $this->dispatch('preview-bulk', $this->selectedIds);
     }
-
-    public function formatPriceStatic($val)
-    {
-        if (!$val) return ['base' => '', 'suffix' => ''];
-        $clean = preg_replace('/[^0-9]/', '', $val);
-        if (strlen($clean) === 0) return ['base' => '', 'suffix' => ''];
-        $num = (int)$clean;
-        if ($num < 1000) return ['base' => (string)$num, 'suffix' => ''];
-        
-        $baseStr = substr($clean, 0, -3);
-        $suffixStr = substr($clean, -3);
-        $formattedBase = number_format((int)$baseStr, 0, ',', '.');
-        return [
-            'base' => $formattedBase . '.',
-            'suffix' => $suffixStr
-        ];
-    }
 };
 ?>
 
@@ -237,8 +250,8 @@ new class extends Component
         <!-- Table Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h3 class="text-base font-extrabold text-slate-800">POP A5 - Harga Coret</h3>
-                <p class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Daftar SKU / Promo (Was/Is)</p>
+                <h3 class="text-base font-extrabold text-slate-800">POP A5 - Diskon %</h3>
+                <p class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Daftar SKU / Diskon</p>
             </div>
             
             <button type="button" 
@@ -285,8 +298,8 @@ new class extends Component
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[120px]">Actions</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[130px]">Qty Print</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Merek & Deskripsi</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Harga Asli (Coret)</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Harga Jual / Promo</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Diskon %</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">S/D</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-20">Unit</th>
                         <th class="py-4 px-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Created At</th>
                     </tr>
@@ -307,7 +320,7 @@ new class extends Component
                                 
                                 <td class="py-3 px-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
-                                        <!-- Preview 👁 -->
+                                        <!-- Preview -->
                                         <button type="button" 
                                                 wire:click="previewSingle({{ $pop['id'] }})"
                                                 class="text-indigo-600 hover:text-indigo-800 transition p-1 hover:bg-slate-100 rounded"
@@ -359,18 +372,14 @@ new class extends Component
                                     </div>
                                 </td>
                                 
-                                <td class="py-3 px-4 text-right font-medium text-slate-500 line-through">
-                                    @php
-                                        $oldP = app()->call([$this, 'formatPriceStatic'], ['val' => $pop['secondary_price']]);
-                                    @endphp
-                                    Rp {{ $oldP['base'] . $oldP['suffix'] }}
+                                <td class="py-3 px-4 text-center font-bold text-indigo-600 text-sm">
+                                    {{ $pop['additional_data']['discount_percent'] ?? '0' }}%
                                 </td>
 
-                                <td class="py-3 px-4 text-right font-bold text-[#dc2626] text-sm">
-                                    @php
-                                        $prc = app()->call([$this, 'formatPriceStatic'], ['val' => $pop['primary_price']]);
-                                    @endphp
-                                    Rp {{ $prc['base'] . $prc['suffix'] }}
+                                <td class="py-3 px-4 text-center">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ ($pop['additional_data']['has_sd'] ?? false) ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-600' }}">
+                                        {{ ($pop['additional_data']['has_sd'] ?? false) ? 'YA' : 'TIDAK' }}
+                                    </span>
                                 </td>
                                 
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
@@ -395,7 +404,7 @@ new class extends Component
          style="display: none;"
          x-transition>
          
-         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl max-w-2xl w-full z-50 overflow-hidden"
+         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl max-w-4xl w-full z-50 overflow-hidden"
               @click.away="open = false">
               
               <!-- Modal Header -->
@@ -409,57 +418,86 @@ new class extends Component
               </div>
 
               <!-- Form Form -->
-              <form wire:submit.prevent="save" class="p-6 space-y-4">
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Merek / Brand</label>
-                          <input type="text" wire:model="brandName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
-                          @error('brandName')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
+              <form wire:submit.prevent="save" class="p-6 space-y-6">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                       
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
-                          <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                      <!-- Col 1: Brand Info -->
+                      <div class="space-y-4">
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Merek / Brand</label>
+                              <input type="text" wire:model="brandName" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                              @error('brandName')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
+                          
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
+                              <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                          </div>
+
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
+                              <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                              @error('unit')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
                       </div>
 
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Jual / Promo</label>
-                          <input type="text" wire:model="primaryPrice" placeholder="e.g. 189900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('primaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
+                      <!-- Col 2: Discount & Header -->
+                      <div class="space-y-4">
+                          <div class="grid grid-cols-2 gap-3">
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Diskon %</label>
+                                  <input type="text" wire:model="discountPercent" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold">
+                                  @error('discountPercent')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
+                              </div>
+                              
+                              <div class="flex items-center pt-8">
+                                  <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-400">
+                                      <input type="checkbox" wire:model="hasSd" class="rounded bg-slate-50 border-slate-200 text-indigo-600 focus:ring-0">
+                                      Pakai S/D
+                                  </label>
+                              </div>
+                          </div>
+
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Banner Header</label>
+                              <input type="text" wire:model="headerText" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                          </div>
+
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Cetak (Qty)</label>
+                              <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                              @error('qtyPrint')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
                       </div>
 
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli (Coret)</label>
-                          <input type="text" wire:model="secondaryPrice" placeholder="e.g. 349900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('secondaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
+                      <!-- Col 3: Comparators -->
+                      <div class="space-y-4">
+                          <div class="border-t border-slate-100 pt-3 space-y-3">
+                              <div class="text-[10px] font-bold text-indigo-600 uppercase tracking-wide">Item Komparator (Pilihan)</div>
+                              <div class="grid grid-cols-2 gap-2">
+                                  <div class="space-y-1.5">
+                                      <input type="text" wire:model="item1Name" placeholder="Item 1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                      <input type="text" wire:model="item1OldPrice" placeholder="Harga Asli" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                      <input type="text" wire:model="item1Price" placeholder="Harga Promo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                  </div>
+                                  
+                                  <div class="space-y-1.5">
+                                      <input type="text" wire:model="item2Name" placeholder="Item 2" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                      <input type="text" wire:model="item2OldPrice" placeholder="Harga Asli" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                      <input type="text" wire:model="item2Price" placeholder="Harga Promo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
+                                  </div>
+                              </div>
+                          </div>
                       </div>
 
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
-                          <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                          @error('unit')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
-
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Banner Header</label>
-                          <input type="text" wire:model="headerText" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                      </div>
-
-                      <div class="md:col-span-2">
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Cetak (Qty)</label>
-                          <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                          @error('qtyPrint')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
                   </div>
 
                   <!-- Footer Buttons -->
@@ -474,4 +512,7 @@ new class extends Component
               </form>
          </div>
     </div>
+
+    <!-- NESTED FEATURE PREVIEW MODAL -->
+    <livewire:a5.discount-percent.preview />
 </div>
