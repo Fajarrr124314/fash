@@ -465,12 +465,17 @@ new class extends Component
                       </div>
 
                       <div class="md:col-span-2 border-t border-slate-100 pt-4 flex flex-col gap-4">
-                          <div class="flex items-center gap-6">
-                              <label class="flex items-center gap-2 cursor-pointer select-none">
-                                  <input type="checkbox" wire:model.live="isDoublePrice" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                  <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan Dua Harga</span>
+                           <div class="flex items-center gap-6">
+                              <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                                  <div class="relative">
+                                      <input type="checkbox" wire:model.live="isDoublePrice" id="spIsDoublePrice" class="sr-only peer">
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan Dua Harga</span>
+                                  </div>
                               </label>
-                          </div>
+                           </div>
 
                           @if($isDoublePrice)
                               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
@@ -481,12 +486,17 @@ new class extends Component
                                           <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                                       @enderror
                                   </div>
-                                  <div class="flex items-center pt-6">
-                                      <label class="flex items-center gap-2 cursor-pointer select-none">
-                                          <input type="checkbox" wire:model="showSd" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                                          <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Tampilkan Teks "S/D"</span>
+                                   <div class="flex items-center pt-6">
+                                      <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                                          <div class="relative">
+                                              <input type="checkbox" wire:model="showSd" id="spShowSd" class="sr-only peer">
+                                              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                          </div>
+                                          <div>
+                                              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Tampilkan Teks "S/D"</span>
+                                          </div>
                                       </label>
-                                  </div>
+                                   </div>
                               </div>
                           @endif
                       </div>

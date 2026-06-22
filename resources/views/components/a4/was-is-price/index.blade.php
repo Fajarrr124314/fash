@@ -474,9 +474,14 @@ new class extends Component
                       </div>
                       
                       <div class="md:col-span-2 border-b border-slate-100 pb-4 mb-2 flex items-center">
-                          <label class="flex items-center gap-2 cursor-pointer select-none">
-                              <input type="checkbox" wire:model.live="isThreePrice" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan 3 Harga (Was/Is)</span>
+                          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                              <div class="relative">
+                                  <input type="checkbox" wire:model.live="isThreePrice" id="wipIsThreePrice" class="sr-only peer">
+                                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                              </div>
+                              <div>
+                                  <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan 3 Harga (Was/Is)</span>
+                              </div>
                           </label>
                       </div>
 
