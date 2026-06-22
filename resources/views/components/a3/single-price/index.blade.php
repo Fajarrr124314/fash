@@ -12,13 +12,16 @@ new class extends Component
     
     // Form State
     public $showForm = false;
-    public $formTitle = 'Tambah POP A3 Single Price';
+    public $formTitle = 'Tambah POP A3 Non Promo';
     public $popId = null;
     
     // Form fields
     public $brandName = '';
     public $productDesc = '';
     public $primaryPrice = '';
+    public $secondaryPrice = '';
+    public $isDoublePrice = false;
+    public $showSd = false;
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
@@ -57,7 +60,7 @@ new class extends Component
     public function openAddForm()
     {
         $this->resetForm();
-        $this->formTitle = 'Tambah POP A3 Single Price';
+        $this->formTitle = 'Tambah POP A3 Non Promo';
         $this->showForm = true;
     }
 
@@ -70,11 +73,14 @@ new class extends Component
             $this->brandName = $pop->brand_name;
             $this->productDesc = $pop->product_desc;
             $this->primaryPrice = $pop->primary_price;
+            $this->secondaryPrice = $pop->secondary_price ?? '';
+            $this->isDoublePrice = $pop->additional_data['is_double_price'] ?? false;
+            $this->showSd = $pop->additional_data['show_sd'] ?? false;
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
             
-            $this->formTitle = 'Edit POP A3 Single Price';
+            $this->formTitle = 'Edit POP A3 Non Promo';
             $this->showForm = true;
         }
     }
@@ -85,6 +91,9 @@ new class extends Component
         $this->brandName = '';
         $this->productDesc = '';
         $this->primaryPrice = '';
+        $this->secondaryPrice = '';
+        $this->isDoublePrice = false;
+        $this->showSd = false;
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
@@ -92,12 +101,16 @@ new class extends Component
 
     public function save()
     {
-        $this->validate([
+        $rules = [
             'brandName' => 'required|string',
             'primaryPrice' => 'required|string',
             'qtyPrint' => 'required|integer|min:1',
             'unit' => 'required|string',
-        ]);
+        ];
+        if ($this->isDoublePrice) {
+            $rules['secondaryPrice'] = 'required|string';
+        }
+        $this->validate($rules);
 
         $name = $this->brandName . ' - ' . ($this->productDesc ?: 'POP');
         $sku = $this->popId ? Pop::find($this->popId)->sku : rand(10000000, 99999999);
@@ -111,18 +124,21 @@ new class extends Component
             'brand_name' => $this->brandName,
             'product_desc' => $this->productDesc,
             'primary_price' => $this->primaryPrice,
-            'secondary_price' => null,
+            'secondary_price' => $this->isDoublePrice ? $this->secondaryPrice : null,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => [
+                'is_double_price' => $this->isDoublePrice,
+                'show_sd' => $this->showSd,
+            ]
         ];
 
         if ($this->popId) {
             Pop::find($this->popId)->update($data);
-            $msg = 'POP A3 Single Price berhasil diperbarui!';
+            $msg = 'POP A3 Non Promo berhasil diperbarui!';
         } else {
             Pop::create($data);
-            $msg = 'POP A3 Single Price berhasil ditambahkan!';
+            $msg = 'POP A3 Non Promo berhasil ditambahkan!';
         }
 
         $this->showForm = false;
@@ -233,7 +249,7 @@ new class extends Component
         <!-- Table Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-                <h3 class="text-base font-extrabold text-slate-800">POP A3 - Harga Tunggal</h3>
+                <h3 class="text-base font-extrabold text-slate-800">POP A3 - Non Promo</h3>
                 <p class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Daftar SKU / Promo (A3)</p>
             </div>
             
@@ -356,9 +372,16 @@ new class extends Component
                                 
                                 <td class="py-3 px-4 text-right font-bold text-[#dc2626] text-sm">
                                     @php
+                                        $isDouble = $pop['additional_data']['is_double_price'] ?? false;
+                                        $showSd = $pop['additional_data']['show_sd'] ?? false;
                                         $prc = $this->formatPriceStatic($pop['primary_price']);
+                                        $priceStr = 'Rp ' . $prc['base'] . $prc['suffix'];
+                                        if ($isDouble && !empty($pop['secondary_price'])) {
+                                            $prc2 = $this->formatPriceStatic($pop['secondary_price']);
+                                            $priceStr .= ($showSd ? ' S/D' : ' -') . ' Rp ' . $prc2['base'] . $prc2['suffix'];
+                                        }
                                     @endphp
-                                    Rp {{ $prc['base'] . $prc['suffix'] }}
+                                    {{ $priceStr }}
                                 </td>
                                 
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
@@ -439,6 +462,43 @@ new class extends Component
                           @error('qtyPrint')
                               <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                           @enderror
+                      </div>
+
+                      <div class="md:col-span-2 border-t border-slate-100 pt-4 flex flex-col gap-4">
+                           <div class="flex items-center gap-6">
+                              <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                                  <div class="relative">
+                                      <input type="checkbox" wire:model.live="isDoublePrice" id="spIsDoublePrice" class="sr-only peer">
+                                      <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                  </div>
+                                  <div>
+                                      <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan Dua Harga</span>
+                                  </div>
+                              </label>
+                           </div>
+
+                          @if($isDoublePrice)
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
+                                  <div>
+                                      <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Kedua</label>
+                                      <input type="text" wire:model="secondaryPrice" placeholder="e.g. 275000" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
+                                      @error('secondaryPrice')
+                                          <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                      @enderror
+                                  </div>
+                                   <div class="flex items-center pt-6">
+                                      <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                                          <div class="relative">
+                                              <input type="checkbox" wire:model="showSd" id="spShowSd" class="sr-only peer">
+                                              <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                          </div>
+                                          <div>
+                                              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Tampilkan Teks "S/D"</span>
+                                          </div>
+                                      </label>
+                                   </div>
+                              </div>
+                          @endif
                       </div>
                   </div>
 

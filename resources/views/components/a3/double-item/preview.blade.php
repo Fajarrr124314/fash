@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Models\Pop;
 use Livewire\Component;
@@ -20,7 +20,8 @@ new class extends Component
         $pop = Pop::find($id);
         if ($pop && $pop->frame_size === 'A3' && $pop->layout_type === 'double_item') {
             $this->activePreviewPop = $pop->toArray();
-            $this->previewQueue = [$this->activePreviewPop];
+            $qty = max(1, (int)($pop->qty_print ?? 1));
+            $this->previewQueue = array_fill(0, $qty, $this->activePreviewPop);
             $this->frameSize = $pop->frame_size;
             $this->showModal = true;
         }
@@ -135,7 +136,7 @@ new class extends Component
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 24px 24px 0 24px;
+            margin: 22px 22px 0 22px;
             border-radius: 0px;
             height: 105px;
             box-sizing: border-box;
@@ -143,19 +144,19 @@ new class extends Component
         }
         
         .pop-card-a3 .header-banner-a3 span {
-            font-size: 48px !important;
+            font-size: 65pt !important;
             font-weight: 700 !important;
             line-height: 1;
             letter-spacing: -0.5px;
         }
         
         .pop-card-a3 .brand-name-a3 {
-            font-size: 52px !important;
+            font-size: 65pt !important;
             font-weight: 700 !important;
             text-transform: uppercase;
             color: black !important;
             line-height: 1;
-            margin-top: 12px;
+            margin-top: 16px;
             letter-spacing: -0.5px;
             text-align: center;
         }
@@ -173,8 +174,8 @@ new class extends Component
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            padding: 0 30px;
+            gap: 17px;
+            padding: 0 28px;
             box-sizing: border-box;
         }
         
@@ -186,8 +187,8 @@ new class extends Component
         }
         
         .pop-card-a3 .double-row-border-a3 {
-            border-bottom: 2px dashed #cbd5e1;
-            padding-bottom: 16px;
+            border-bottom: 1.5px dashed #cbd5e1;
+            padding-bottom: 14px;
         }
         
         .pop-card-a3 .double-left-a3 {
@@ -204,10 +205,10 @@ new class extends Component
         }
         
         .pop-card-a3 .double-was-a3 {
-            font-size: 16pt !important;
+            font-size: 15pt !important;
             color: #64748b !important;
             font-weight: 400;
-            margin-top: 2px;
+            margin-top: 1px;
         }
         
         .pop-card-a3 .double-right-a3 {
@@ -218,15 +219,15 @@ new class extends Component
         }
         
         .pop-card-a3 .double-rp-a3 {
-            font-size: 14pt !important;
+            font-size: 15pt !important;
             font-weight: 400 !important;
-            margin-top: 2px;
+            margin-top: 1px;
             margin-right: 1px;
             color: #000000 !important;
         }
         
         .pop-card-a3 .double-price-base-a3 {
-            font-size: 36pt !important;
+            font-size: 37pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
         }
@@ -235,42 +236,33 @@ new class extends Component
             font-size: 20pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
-            margin-top: 2px;
+            margin-top: 1px;
         }
         
         @media print {
             body, html {
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
+                width: 210mm !important;
+                height: 297mm !important;
                 background: white !important;
                 overflow: hidden !important;
             }
             .no-print {
                 display: none !important;
             }
-            .print-area-wrapper-modal {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                background: white !important;
-                z-index: 99999 !important;
+            .pop-card-a3 {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
             }
             .pop-card-preview {
                 box-shadow: none !important;
                 border: none !important;
-                margin: 0 auto !important;
                 padding: 0px !important;
-            }
-            .print-card-item-modal {
-                page-break-after: always;
-                page-break-inside: avoid;
             }
         }
      
@@ -295,7 +287,7 @@ new class extends Component
             .pop-card-preview {
                 transform-origin: top center;
                 transform: scale(0.32);
-                margin-bottom: calc((210mm * -0.68)) !important;
+                margin-bottom: calc((297mm * -0.68)) !important;
             }
             .preview-scroll-area {
                 min-height: 100px;
@@ -305,7 +297,7 @@ new class extends Component
             .pop-card-preview {
                 transform-origin: top center;
                 transform: scale(0.45);
-                margin-bottom: calc((210mm * -0.55)) !important;
+                margin-bottom: calc((297mm * -0.55)) !important;
             }
             .preview-scroll-area {
                 min-height: 160px;
@@ -343,7 +335,7 @@ new class extends Component
                        </div>
 
                        <!-- Content Body -->
-                       <div class="flex-grow flex flex-col justify-between py-4 px-5 leading-none">
+                       <div class="flex-grow flex flex-col justify-between py-5 px-6 leading-none">
                            <!-- Brand Block -->
                            <div>
                                <div class="brand-name-a3">{{ $activePreviewPop['brand_name'] }}</div>
@@ -387,10 +379,10 @@ new class extends Component
                                </div>
                            </div>
                         <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
+                        <div style="text-align:center; padding-bottom: 7px; padding-top: 140px; line-height:0;">
+                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 25px; width: auto; display: inline-block; object-fit: contain;">
                         </div>
-                           <div class="h-4"></div>
+                        <div style="height: 28px;"></div>
                        </div>
                   </div>
               @endif
@@ -402,7 +394,7 @@ new class extends Component
                   Tutup
               </button>
               <button type="button" 
-                      @click="window.print();"
+                      @click="window.printA3DoubleItem()"
                       class="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition duration-150 flex items-center gap-1.5 shadow-md shadow-indigo-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -413,22 +405,66 @@ new class extends Component
      </div>
 </div>
 
-<!-- ==================== PRINT CONTEXT WRAPPER (HIDDEN ON SCREEN) ==================== -->
-<div id="pop-print-area" class="print-only hidden">
+@script
+<script>
+window.printA3DoubleItem = function() {
+    var area = document.getElementById('pop-print-area-a3di');
+    if (!area) { alert('Data print tidak ditemukan.'); return; }
+    var html = area.innerHTML;
+    if (!html.trim()) { alert('Tidak ada data untuk dicetak.'); return; }
+
+    var win = window.open('', '_blank', 'width=1200,height=900');
+    if (!win) { alert('Popup diblokir browser! Izinkan popup untuk domain ini.'); return; }
+    win.document.open();
+    win.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+        + '<style>'
+        + '@page { size: 210mm 297mm portrait; margin: 0; }'
+        + '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }'
+        + 'body { background: white; font-family: \'Arial Narrow\', Arial, sans-serif; }'
+        + '.pop-card-a3 { width: 210mm; height: 297mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; background-color: white; color: black; overflow: hidden; position: relative; page-break-after: always; page-break-inside: avoid; }'
+        + '.header-banner-a3 { background-color: #dc2626 !important; color: white !important; text-align: center; text-transform: uppercase; display: flex; align-items: center; justify-content: center; margin: 22px 22px 0 22px; height: 105px; box-sizing: border-box; padding: 0 10px; }'
+        + '.header-banner-a3 span { font-size: 65pt !important; font-weight: 700 !important; line-height: 1; letter-spacing: -0.5px; }'
+        + '.brand-name-a3 { font-size: 65pt !important; font-weight: 700 !important; text-transform: uppercase; color: black !important; line-height: 1; margin-top: 16px; letter-spacing: -0.5px; text-align: center; }'
+        + '.double-container-a3 { width: 100%; display: flex; flex-direction: column; gap: 17px; padding: 0 28px; box-sizing: border-box; }'
+        + '.double-row-a3 { display: flex; justify-content: space-between; align-items: center; width: 100%; }'
+        + '.double-row-border-a3 { border-bottom: 1.5px dashed #cbd5e1; padding-bottom: 14px; }'
+        + '.double-left-a3 { text-align: left; display: flex; flex-direction: column; }'
+        + '.double-name-a3 { font-size: 20pt !important; font-weight: 700 !important; color: black !important; text-transform: uppercase; }'
+        + '.double-was-a3 { font-size: 15pt !important; color: #64748b !important; font-weight: 400; margin-top: 1px; }'
+        + '.double-right-a3 { display: flex; align-items: flex-start; color: #dc2626 !important; font-weight: 700 !important; }'
+        + '.double-rp-a3 { font-size: 15pt !important; font-weight: 400 !important; margin-top: 1px; margin-right: 1px; color: #000000 !important; }'
+        + '.double-price-base-a3 { font-size: 37pt !important; font-weight: 700 !important; line-height: 0.8; }'
+        + '.double-price-suffix-a3 { font-size: 20pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; }'
+        + '.coret-diagonal-preview { position: relative; display: inline-block; }'
+        + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 3px; background-color: #000000 !important; transform: rotate(-6deg); }'
+        + '</style>'
+        + '</head><body>' + html + '</body></html>'
+    );
+    win.document.close();
+    win.focus();
+    setTimeout(function() {
+        win.print();
+        setTimeout(function() { win.close(); }, 500);
+    }, 400);
+};
+</script>
+@endscript
+
+<!-- ==================== PRINT DATA AREA (hidden off-screen) ==================== -->
+<div id="pop-print-area-a3di" style="position:absolute;left:-99999px;top:0;width:210mm;overflow:hidden;">
     @foreach($previewQueue as $pq)
-        <div class="pop-card-preview bg-white relative flex flex-col justify-between overflow-hidden print-card-item-modal pop-card-a3"
-             style="width: 210mm; height: 297mm; margin: 0 auto; page-break-after: always; page-break-inside: avoid; border: none; box-shadow: none; box-sizing: border-box; padding: 0px; font-family: 'Arial Narrow', 'Archivo Narrow', Arial, sans-serif;">
-            
+        <div class="pop-card-a3">
             <!-- Header Banner -->
             <div class="header-banner-a3">
                 <span>{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
             </div>
 
             <!-- Content Body -->
-            <div class="flex-grow flex flex-col justify-between py-4 px-5 leading-none">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 22px 28px 22px 28px; line-height: none;">
                 <!-- Brand Block -->
                 <div>
-                    <div class="brand-name-a3">{{ $pq['brand_name'] }}</div>
+                    <div class="brand-name-a3" style="margin-top: 16px;">{{ $pq['brand_name'] }}</div>
                 </div>
 
                 <!-- Price Area -->
@@ -468,11 +504,11 @@ new class extends Component
                         </div>
                     </div>
                 </div>
-            <!-- Footer Image -->
-            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-            </div>
-                <div class="h-4"></div>
+                <!-- Footer Image -->
+                <div style="text-align:center; padding-bottom: 7px; padding-top: 140px; line-height:0;">
+                    <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 25px; width: auto; display: inline-block; object-fit: contain;">
+                </div>
+                <div style="height: 28px;"></div>
             </div>
         </div>
     @endforeach

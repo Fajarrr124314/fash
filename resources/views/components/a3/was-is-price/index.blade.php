@@ -1,8 +1,8 @@
 <?php
-
+ 
 use App\Models\Pop;
 use Livewire\Component;
-
+ 
 new class extends Component
 {
     public $pops = [];
@@ -23,12 +23,16 @@ new class extends Component
     public $qtyPrint = 1;
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
-
+ 
+    // 3 Harga State
+    public $isThreePrice = false;
+    public $items = [];
+ 
     public function mount()
     {
         $this->loadPops();
     }
-
+ 
     public function loadPops()
     {
         $query = Pop::where('frame_size', 'A3')->where('layout_type', 'was_is_price');
@@ -40,12 +44,12 @@ new class extends Component
         }
         $this->pops = $query->orderBy('created_at', 'desc')->get()->toArray();
     }
-
+ 
     public function updatedSearch()
     {
         $this->loadPops();
     }
-
+ 
     public function toggleAll()
     {
         if ($this->allChecked) {
@@ -54,14 +58,14 @@ new class extends Component
             $this->selectedIds = [];
         }
     }
-
+ 
     public function openAddForm()
     {
         $this->resetForm();
         $this->formTitle = 'Tambah POP A3 Was/Is Price';
         $this->showForm = true;
     }
-
+ 
     public function editPop($id)
     {
         $this->resetForm();
@@ -75,12 +79,18 @@ new class extends Component
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
+            $this->isThreePrice = $pop->additional_data['is_three_price'] ?? false;
+            $this->items = $pop->additional_data['items'] ?? [
+                ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+                ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+                ['desc' => '', 'old_price' => '', 'promo_price' => '']
+            ];
             
             $this->formTitle = 'Edit POP A3 Was/Is Price';
             $this->showForm = true;
         }
     }
-
+ 
     public function resetForm()
     {
         $this->popId = null;
@@ -91,21 +101,40 @@ new class extends Component
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
+        $this->isThreePrice = false;
+        $this->items = [
+            ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+            ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+            ['desc' => '', 'old_price' => '', 'promo_price' => '']
+        ];
     }
-
+ 
     public function save()
     {
-        $this->validate([
+        $rules = [
             'brandName' => 'required|string',
-            'primaryPrice' => 'required|string',
-            'secondaryPrice' => 'required|string',
             'qtyPrint' => 'required|integer|min:1',
             'unit' => 'required|string',
-        ]);
-
-        $name = $this->brandName . ' - ' . ($this->productDesc ?: 'POP');
+        ];
+        if ($this->isThreePrice) {
+            $rules['items.0.desc'] = 'required|string';
+            $rules['items.0.old_price'] = 'required|string';
+            $rules['items.0.promo_price'] = 'required|string';
+            $rules['items.1.desc'] = 'required|string';
+            $rules['items.1.old_price'] = 'required|string';
+            $rules['items.1.promo_price'] = 'required|string';
+            $rules['items.2.desc'] = 'required|string';
+            $rules['items.2.old_price'] = 'required|string';
+            $rules['items.2.promo_price'] = 'required|string';
+        } else {
+            $rules['primaryPrice'] = 'required|string';
+            $rules['secondaryPrice'] = 'required|string';
+        }
+        $this->validate($rules);
+ 
+        $name = $this->brandName . ' - ' . ($this->isThreePrice ? '3 Harga Coret' : ($this->productDesc ?: 'POP'));
         $sku = $this->popId ? Pop::find($this->popId)->sku : rand(10000000, 99999999);
-
+ 
         $data = [
             'sku' => $sku,
             'name' => $name,
@@ -113,14 +142,17 @@ new class extends Component
             'layout_type' => 'was_is_price',
             'header_text' => $this->headerText,
             'brand_name' => $this->brandName,
-            'product_desc' => $this->productDesc,
-            'primary_price' => $this->primaryPrice,
-            'secondary_price' => $this->secondaryPrice,
+            'product_desc' => $this->isThreePrice ? '' : $this->productDesc,
+            'primary_price' => $this->isThreePrice ? '' : $this->primaryPrice,
+            'secondary_price' => $this->isThreePrice ? '' : $this->secondaryPrice,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => [
+                'is_three_price' => $this->isThreePrice,
+                'items' => $this->isThreePrice ? $this->items : null
+            ]
         ];
-
+ 
         if ($this->popId) {
             Pop::find($this->popId)->update($data);
             $msg = 'POP A3 Was/Is Price berhasil diperbarui!';
@@ -128,14 +160,14 @@ new class extends Component
             Pop::create($data);
             $msg = 'POP A3 Was/Is Price berhasil ditambahkan!';
         }
-
+ 
         $this->showForm = false;
         $this->loadPops();
         $this->selectedIds = [];
         $this->allChecked = false;
         $this->dispatch('notify', ['type' => 'success', 'message' => $msg]);
     }
-
+ 
     public function deletePop($id)
     {
         Pop::destroy($id);
@@ -143,7 +175,7 @@ new class extends Component
         $this->selectedIds = array_values(array_filter($this->selectedIds, fn($val) => $val != $id));
         $this->dispatch('notify', ['type' => 'warning', 'message' => 'POP berhasil dihapus.']);
     }
-
+ 
     public function bulkDelete()
     {
         if (count($this->selectedIds) === 0) {
@@ -156,7 +188,7 @@ new class extends Component
         $this->loadPops();
         $this->dispatch('notify', ['type' => 'success', 'message' => 'POP terpilih berhasil dihapus.']);
     }
-
+ 
     public function incrementQty($id)
     {
         $pop = Pop::find($id);
@@ -165,7 +197,7 @@ new class extends Component
             $this->loadPops();
         }
     }
-
+ 
     public function decrementQty($id)
     {
         $pop = Pop::find($id);
@@ -174,12 +206,12 @@ new class extends Component
             $this->loadPops();
         }
     }
-
+ 
     public function previewSingle($id)
     {
         $this->dispatch('preview-single', $id);
     }
-
+ 
     public function bulkPrint()
     {
         if (count($this->selectedIds) === 0) {
@@ -188,26 +220,9 @@ new class extends Component
         }
         $this->dispatch('preview-bulk', $this->selectedIds);
     }
-
-    public function formatPriceStatic($val)
-    {
-        if (!$val) return ['base' => '', 'suffix' => ''];
-        $clean = preg_replace('/[^0-9]/', '', $val);
-        if (strlen($clean) === 0) return ['base' => '', 'suffix' => ''];
-        $num = (int)$clean;
-        if ($num < 1000) return ['base' => (string)$num, 'suffix' => ''];
-        
-        $baseStr = substr($clean, 0, -3);
-        $suffixStr = substr($clean, -3);
-        $formattedBase = number_format((int)$baseStr, 0, ',', '.');
-        return [
-            'base' => $formattedBase . '.',
-            'suffix' => $suffixStr
-        ];
-    }
 };
 ?>
-
+ 
 <div class="space-y-6">
     <!-- Header Controls -->
     <div class="no-print flex items-center justify-between gap-3">
@@ -231,14 +246,14 @@ new class extends Component
             </button>
         </div>
     </div>
-
+ 
     <!-- TABLE LIST BLOCK (Solid White) -->
     <div class="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col w-full">
         <!-- Table Header -->
         <div class="px-6 py-5 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
                 <h3 class="text-base font-extrabold text-slate-800">POP A3 - Harga Coret</h3>
-                <p class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Daftar SKU / Promo (Was/Is A3)</p>
+                <p class="text-xs text-slate-400 font-semibold uppercase mt-0.5">Daftar SKU / Harga Coret (A3)</p>
             </div>
             
             <button type="button" 
@@ -250,7 +265,7 @@ new class extends Component
                 Tambah POP A3
             </button>
         </div>
-
+ 
         <!-- Table Filters & Search -->
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -273,7 +288,7 @@ new class extends Component
                        class="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 font-semibold animate-none">
             </div>
         </div>
-
+ 
         <!-- Responsive Table -->
         <div class="overflow-x-auto w-full">
             <table class="w-full text-left border-collapse min-w-[800px]">
@@ -285,8 +300,9 @@ new class extends Component
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[120px]">Actions</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[130px]">Qty Print</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Merek & Deskripsi</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Harga Asli (Coret)</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Harga Jual / Promo</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center font-bold">Mode 3 Harga</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Harga Promo</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Harga Coret</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-20">Unit</th>
                         <th class="py-4 px-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Created At</th>
                     </tr>
@@ -294,7 +310,7 @@ new class extends Component
                 <tbody class="divide-y divide-slate-100 text-xs">
                     @if(count($pops) === 0)
                         <tr>
-                            <td colspan="8" class="py-8 px-6 text-center text-slate-400 font-medium">
+                            <td colspan="9" class="py-8 px-6 text-center text-slate-400 font-medium">
                                 Tidak ada data POP ditemukan.
                             </td>
                         </tr>
@@ -355,22 +371,36 @@ new class extends Component
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col">
                                         <span class="font-bold text-slate-900 uppercase text-[13px]">{{ $pop['brand_name'] }}</span>
-                                        <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                        <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+                                            @if(!empty($pop['additional_data']['is_three_price']) && !empty($pop['additional_data']['items']))
+                                                3 ITEM: {{ implode(', ', array_filter(array_column($pop['additional_data']['items'], 'desc'))) }}
+                                            @else
+                                                {{ $pop['product_desc'] ?: '-' }}
+                                            @endif
+                                        </span>
                                     </div>
                                 </td>
                                 
-                                <td class="py-3 px-4 text-right font-medium text-slate-500 line-through">
-                                    @php
-                                        $oldP = $this->formatPriceStatic($pop['secondary_price']);
-                                    @endphp
-                                    Rp {{ $oldP['base'] . $oldP['suffix'] }}
+                                <td class="py-3 px-4 text-center">
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ ($pop['additional_data']['is_three_price'] ?? false) ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-600' }}">
+                                        {{ ($pop['additional_data']['is_three_price'] ?? false) ? 'YA' : 'TIDAK' }}
+                                    </span>
                                 </td>
-
-                                <td class="py-3 px-4 text-right font-bold text-[#dc2626] text-sm">
-                                    @php
-                                        $prc = $this->formatPriceStatic($pop['primary_price']);
-                                    @endphp
-                                    Rp {{ $prc['base'] . $prc['suffix'] }}
+ 
+                                <td class="py-3 px-4 text-center text-red-600 font-bold">
+                                    @if(!empty($pop['additional_data']['is_three_price']))
+                                        -
+                                    @else
+                                        {{ $pop['primary_price'] ? 'Rp '.number_format((int)preg_replace('/[^0-9]/', '', $pop['primary_price']), 0, ',', '.') : '-' }}
+                                    @endif
+                                </td>
+ 
+                                <td class="py-3 px-4 text-center text-slate-500 font-semibold line-through">
+                                    @if(!empty($pop['additional_data']['is_three_price']))
+                                        -
+                                    @else
+                                        {{ $pop['secondary_price'] ? 'Rp '.number_format((int)preg_replace('/[^0-9]/', '', $pop['secondary_price']), 0, ',', '.') : '-' }}
+                                    @endif
                                 </td>
                                 
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
@@ -387,7 +417,7 @@ new class extends Component
             </table>
         </div>
     </div>
-
+ 
     <!-- FLOATING POP FORM MODAL (Solid White) -->
     <div x-data="{ open: @entangle('showForm') }"
          x-show="open"
@@ -395,7 +425,7 @@ new class extends Component
          style="display: none;"
          x-transition>
          
-         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl max-w-2xl w-full z-50 overflow-hidden"
+         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl max-w-4xl w-full z-50 overflow-hidden"
               @click.away="open = false">
               
               <!-- Modal Header -->
@@ -407,7 +437,7 @@ new class extends Component
                       </svg>
                   </button>
               </div>
-
+ 
               <!-- Form Form -->
               <form wire:submit.prevent="save" class="p-6 space-y-4">
                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -419,49 +449,93 @@ new class extends Component
                           @enderror
                       </div>
                       
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
-                          <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                      <div class="md:col-span-2 border-b border-slate-100 pb-4 mb-2 flex items-center">
+                          <label class="inline-flex items-center gap-3 cursor-pointer select-none">
+                              <div class="relative">
+                                  <input type="checkbox" wire:model.live="isThreePrice" id="wipIsThreePrice" class="sr-only peer">
+                                  <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                              </div>
+                              <div>
+                                  <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan 3 Harga (Was/Is)</span>
+                              </div>
+                          </label>
                       </div>
-
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Jual / Promo</label>
-                          <input type="text" wire:model="primaryPrice" placeholder="e.g. 189900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('primaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
+ 
+                      @if($isThreePrice)
+                          <!-- Three Price Fields -->
+                          <div class="md:col-span-2 space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-150">
+                              @for($i = 0; $i < 3; $i++)
+                                  <div class="space-y-3 pb-3 {{ $i < 2 ? 'border-b border-slate-200' : '' }}">
+                                      <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Item {{ $i + 1 }}</h4>
+                                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                          <div class="md:col-span-1">
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Deskripsi Item {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.desc" placeholder="e.g. KEMEJA LENGAN PENDEK" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500 uppercase">
+                                              @error("items.{$i}.desc") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                          <div>
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga Coret {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.old_price" placeholder="e.g. 249900" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                              @error("items.{$i}.old_price") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                          <div>
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga Promo {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.promo_price" placeholder="e.g. 149900" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500 text-[#dc2626]">
+                                              @error("items.{$i}.promo_price") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                      </div>
+                                  </div>
+                              @endfor
+                          </div>
+                      @else
+                          <!-- Single Item Fields -->
+                          <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
+                                  <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold animate-none">
+                              </div>
+                              
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Promo (Rp)</label>
+                                  <input type="text" wire:model="primaryPrice" placeholder="e.g. 149900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold text-[#dc2626]">
+                                  @error('primaryPrice')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
+                              </div>
+ 
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli / Coret (Rp)</label>
+                                  <input type="text" wire:model="secondaryPrice" placeholder="e.g. 249900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold text-slate-600">
+                                  @error('secondaryPrice')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
+                              </div>
+                          </div>
+                      @endif
+ 
+                      <div class="grid grid-cols-2 gap-3 md:col-span-2">
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
+                              <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                              @error('unit')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Cetak (Qty)</label>
+                              <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                              @error('qtyPrint')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
                       </div>
-
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli (Coret)</label>
-                          <input type="text" wire:model="secondaryPrice" placeholder="e.g. 349900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('secondaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
-
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
-                          <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                          @error('unit')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
-
-                      <div>
+ 
+                      <div class="md:col-span-2">
                           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Banner Header</label>
                           <input type="text" wire:model="headerText" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
                       </div>
-
-                      <div class="md:col-span-2">
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Cetak (Qty)</label>
-                          <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                          @error('qtyPrint')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
                   </div>
-
+ 
                   <!-- Footer Buttons -->
                   <div class="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-6">
                       <button type="button" @click="open = false" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl text-xs transition duration-150">
@@ -474,7 +548,7 @@ new class extends Component
               </form>
          </div>
     </div>
-
+ 
     <!-- NESTED FEATURE PREVIEW MODAL -->
     <livewire:a3.was-is-price.preview />
 </div>

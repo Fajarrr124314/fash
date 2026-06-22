@@ -211,6 +211,23 @@ new class extends Component
         }
         $this->dispatch('preview-bulk', $this->selectedIds);
     }
+
+    public function formatPriceStatic($val)
+    {
+        if (!$val) return ['base' => '', 'suffix' => ''];
+        $clean = preg_replace('/[^0-9]/', '', $val);
+        if (strlen($clean) === 0) return ['base' => '', 'suffix' => ''];
+        $num = (int)$clean;
+        if ($num < 1000) return ['base' => (string)$num, 'suffix' => ''];
+        
+        $baseStr = substr($clean, 0, -3);
+        $suffixStr = substr($clean, -3);
+        $formattedBase = number_format((int)$baseStr, 0, ',', '.');
+        return [
+            'base' => $formattedBase . '.',
+            'suffix' => $suffixStr
+        ];
+    }
 };
 ?>
 

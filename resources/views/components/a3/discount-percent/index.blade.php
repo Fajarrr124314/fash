@@ -1,8 +1,8 @@
 <?php
-
+ 
 use App\Models\Pop;
 use Livewire\Component;
-
+ 
 new class extends Component
 {
     public $pops = [];
@@ -20,23 +20,22 @@ new class extends Component
     public $productDesc = '';
     public $qtyPrint = 1;
     public $unit = 'PCS';
-    public $headerText = 'HARGA SPESIAL';
+    public $headerText = 'DISKON';
     
     // Discount layout specific fields
-    public $discountPercent = '60';
-    public $hasSd = false;
-    public $item1Name = 'LENGAN PENDEK';
-    public $item1Price = '';
-    public $item1OldPrice = '';
-    public $item2Name = 'LENGAN PANJANG';
-    public $item2Price = '';
-    public $item2OldPrice = '';
-
+    public $discountPercent = '50';
+    public $discountPercent2 = '';
+    public $isDoubleDiscount = false;
+    public $primaryPrice = '';
+    public $secondaryPrice = '';
+    public $showDescription = true;
+    public $showStartingFrom = false;
+ 
     public function mount()
     {
         $this->loadPops();
     }
-
+ 
     public function loadPops()
     {
         $query = Pop::where('frame_size', 'A3')->where('layout_type', 'discount_percent');
@@ -48,12 +47,12 @@ new class extends Component
         }
         $this->pops = $query->orderBy('created_at', 'desc')->get()->toArray();
     }
-
+ 
     public function updatedSearch()
     {
         $this->loadPops();
     }
-
+ 
     public function toggleAll()
     {
         if ($this->allChecked) {
@@ -62,14 +61,14 @@ new class extends Component
             $this->selectedIds = [];
         }
     }
-
+ 
     public function openAddForm()
     {
         $this->resetForm();
         $this->formTitle = 'Tambah POP A3 Discount Percent';
         $this->showForm = true;
     }
-
+ 
     public function editPop($id)
     {
         $this->resetForm();
@@ -81,22 +80,21 @@ new class extends Component
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
+            $this->primaryPrice = $pop->primary_price;
+            $this->secondaryPrice = $pop->secondary_price;
+            $this->showStartingFrom = (bool)$pop->show_starting_from;
             
             $add = $pop->additional_data ?? [];
-            $this->discountPercent = $add['discount_percent'] ?? '60';
-            $this->hasSd = $add['has_sd'] ?? false;
-            $this->item1Name = $add['item1_name'] ?? 'LENGAN PENDEK';
-            $this->item1Price = $add['item1_price'] ?? '';
-            $this->item1OldPrice = $add['item1_old_price'] ?? '';
-            $this->item2Name = $add['item2_name'] ?? 'LENGAN PANJANG';
-            $this->item2Price = $add['item2_price'] ?? '';
-            $this->item2OldPrice = $add['item2_old_price'] ?? '';
+            $this->discountPercent = $add['discount_percent'] ?? '50';
+            $this->discountPercent2 = $add['discount_percent_2'] ?? '';
+            $this->isDoubleDiscount = (bool)($add['is_double_discount'] ?? false);
+            $this->showDescription = isset($add['show_description']) ? (bool)$add['show_description'] : true;
             
             $this->formTitle = 'Edit POP A3 Discount Percent';
             $this->showForm = true;
         }
     }
-
+ 
     public function resetForm()
     {
         $this->popId = null;
@@ -104,29 +102,29 @@ new class extends Component
         $this->productDesc = '';
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
-        $this->headerText = 'HARGA SPESIAL';
-        $this->discountPercent = '60';
-        $this->hasSd = false;
-        $this->item1Name = 'LENGAN PENDEK';
-        $this->item1Price = '';
-        $this->item1OldPrice = '';
-        $this->item2Name = 'LENGAN PANJANG';
-        $this->item2Price = '';
-        $this->item2OldPrice = '';
+        $this->headerText = 'DISKON';
+        $this->discountPercent = '50';
+        $this->discountPercent2 = '';
+        $this->isDoubleDiscount = false;
+        $this->primaryPrice = '';
+        $this->secondaryPrice = '';
+        $this->showDescription = true;
+        $this->showStartingFrom = false;
     }
-
+ 
     public function save()
     {
         $this->validate([
             'brandName' => 'required|string',
             'discountPercent' => 'required|string',
+            'primaryPrice' => 'required|string',
             'qtyPrint' => 'required|integer|min:1',
             'unit' => 'required|string',
         ]);
-
+ 
         $name = $this->brandName . ' - ' . ($this->productDesc ?: 'POP');
         $sku = $this->popId ? Pop::find($this->popId)->sku : rand(10000000, 99999999);
-
+ 
         $data = [
             'sku' => $sku,
             'name' => $name,
@@ -135,22 +133,19 @@ new class extends Component
             'header_text' => $this->headerText,
             'brand_name' => $this->brandName,
             'product_desc' => $this->productDesc,
-            'primary_price' => null,
-            'secondary_price' => null,
+            'primary_price' => $this->primaryPrice,
+            'secondary_price' => $this->secondaryPrice,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
             'additional_data' => [
                 'discount_percent' => $this->discountPercent,
-                'has_sd' => $this->hasSd,
-                'item1_name' => $this->item1Name,
-                'item1_price' => $this->item1Price,
-                'item1_old_price' => $this->item1OldPrice,
-                'item2_name' => $this->item2Name,
-                'item2_price' => $this->item2Price,
-                'item2_old_price' => $this->item2OldPrice,
-            ]
+                'discount_percent_2' => $this->discountPercent2,
+                'is_double_discount' => $this->isDoubleDiscount,
+                'show_description' => $this->showDescription,
+            ],
+            'show_starting_from' => $this->showStartingFrom,
         ];
-
+ 
         if ($this->popId) {
             Pop::find($this->popId)->update($data);
             $msg = 'POP A3 Discount Percent berhasil diperbarui!';
@@ -158,14 +153,14 @@ new class extends Component
             Pop::create($data);
             $msg = 'POP A3 Discount Percent berhasil ditambahkan!';
         }
-
+ 
         $this->showForm = false;
         $this->loadPops();
         $this->selectedIds = [];
         $this->allChecked = false;
         $this->dispatch('notify', ['type' => 'success', 'message' => $msg]);
     }
-
+ 
     public function deletePop($id)
     {
         Pop::destroy($id);
@@ -173,7 +168,7 @@ new class extends Component
         $this->selectedIds = array_values(array_filter($this->selectedIds, fn($val) => $val != $id));
         $this->dispatch('notify', ['type' => 'warning', 'message' => 'POP berhasil dihapus.']);
     }
-
+ 
     public function bulkDelete()
     {
         if (count($this->selectedIds) === 0) {
@@ -186,7 +181,7 @@ new class extends Component
         $this->loadPops();
         $this->dispatch('notify', ['type' => 'success', 'message' => 'POP terpilih berhasil dihapus.']);
     }
-
+ 
     public function incrementQty($id)
     {
         $pop = Pop::find($id);
@@ -195,7 +190,7 @@ new class extends Component
             $this->loadPops();
         }
     }
-
+ 
     public function decrementQty($id)
     {
         $pop = Pop::find($id);
@@ -204,12 +199,12 @@ new class extends Component
             $this->loadPops();
         }
     }
-
+ 
     public function previewSingle($id)
     {
         $this->dispatch('preview-single', $id);
     }
-
+ 
     public function bulkPrint()
     {
         if (count($this->selectedIds) === 0) {
@@ -220,7 +215,7 @@ new class extends Component
     }
 };
 ?>
-
+ 
 <div class="space-y-6">
     <!-- Header Controls -->
     <div class="no-print flex items-center justify-between gap-3">
@@ -244,7 +239,7 @@ new class extends Component
             </button>
         </div>
     </div>
-
+ 
     <!-- TABLE LIST BLOCK (Solid White) -->
     <div class="bg-white border border-slate-200 rounded-2xl shadow-md overflow-hidden flex flex-col w-full">
         <!-- Table Header -->
@@ -263,7 +258,7 @@ new class extends Component
                 Tambah POP A3
             </button>
         </div>
-
+ 
         <!-- Table Filters & Search -->
         <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2 text-xs font-semibold text-slate-500">
@@ -286,7 +281,7 @@ new class extends Component
                        class="w-full bg-white border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 font-semibold animate-none">
             </div>
         </div>
-
+ 
         <!-- Responsive Table -->
         <div class="overflow-x-auto w-full">
             <table class="w-full text-left border-collapse min-w-[800px]">
@@ -298,8 +293,9 @@ new class extends Component
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[120px]">Actions</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-[130px]">Qty Print</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Merek & Deskripsi</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center font-bold">Diskon %</th>
-                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">S/D</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Diskon %</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Harga Promo</th>
+                        <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Harga Coret</th>
                         <th class="py-4 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-20">Unit</th>
                         <th class="py-4 px-5 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Created At</th>
                     </tr>
@@ -307,7 +303,7 @@ new class extends Component
                 <tbody class="divide-y divide-slate-100 text-xs">
                     @if(count($pops) === 0)
                         <tr>
-                            <td colspan="8" class="py-8 px-6 text-center text-slate-400 font-medium">
+                            <td colspan="9" class="py-8 px-6 text-center text-slate-400 font-medium">
                                 Tidak ada data POP ditemukan.
                             </td>
                         </tr>
@@ -372,14 +368,19 @@ new class extends Component
                                     </div>
                                 </td>
                                 
-                                <td class="py-3 px-4 text-center font-bold text-indigo-600 text-sm">
+                                <td class="py-3 px-4 text-center font-bold text-indigo-600 text-[13px]">
                                     {{ $pop['additional_data']['discount_percent'] ?? '0' }}%
+                                    @if(!empty($pop['additional_data']['is_double_discount']) && !empty($pop['additional_data']['discount_percent_2']))
+                                        + {{ $pop['additional_data']['discount_percent_2'] }}%
+                                    @endif
                                 </td>
-
-                                <td class="py-3 px-4 text-center">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ ($pop['additional_data']['has_sd'] ?? false) ? 'bg-indigo-100 text-indigo-800' : 'bg-slate-100 text-slate-600' }}">
-                                        {{ ($pop['additional_data']['has_sd'] ?? false) ? 'YA' : 'TIDAK' }}
-                                    </span>
+ 
+                                <td class="py-3 px-4 text-center text-red-600 font-bold">
+                                    {{ $pop['primary_price'] ? 'Rp '.number_format((int)preg_replace('/[^0-9]/', '', $pop['primary_price']), 0, ',', '.') : '-' }}
+                                </td>
+ 
+                                <td class="py-3 px-4 text-center text-slate-500 font-semibold line-through">
+                                    {{ $pop['secondary_price'] ? 'Rp '.number_format((int)preg_replace('/[^0-9]/', '', $pop['secondary_price']), 0, ',', '.') : '-' }}
                                 </td>
                                 
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
@@ -396,7 +397,7 @@ new class extends Component
             </table>
         </div>
     </div>
-
+ 
     <!-- FLOATING POP FORM MODAL (Solid White) -->
     <div x-data="{ open: @entangle('showForm') }"
          x-show="open"
@@ -416,7 +417,7 @@ new class extends Component
                       </svg>
                   </button>
               </div>
-
+ 
               <!-- Form Form -->
               <form wire:submit.prevent="save" class="p-6 space-y-6">
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -435,70 +436,106 @@ new class extends Component
                               <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
                               <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
                           </div>
-
-                          <div>
-                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
-                              <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                              @error('unit')
-                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                              @enderror
-                          </div>
-                      </div>
-
-                      <!-- Col 2: Discount & Header -->
-                      <div class="space-y-4">
+ 
                           <div class="grid grid-cols-2 gap-3">
                               <div>
-                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Diskon %</label>
-                                  <input type="text" wire:model="discountPercent" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold">
-                                  @error('discountPercent')
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>
+                                  <input type="text" wire:model="unit" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                                  @error('unit')
                                       <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                                   @enderror
                               </div>
-                              
-                              <div class="flex items-center pt-8">
-                                  <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-400">
-                                      <input type="checkbox" wire:model="hasSd" class="rounded bg-slate-50 border-slate-200 text-indigo-600 focus:ring-0">
-                                      Pakai S/D
-                                  </label>
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Qty Cetak</label>
+                                  <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
+                                  @error('qtyPrint')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
                               </div>
                           </div>
-
+                      </div>
+ 
+                      <!-- Col 2: Layout & Toggles -->
+                      <div class="space-y-4">
                           <div>
                               <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Banner Header</label>
                               <input type="text" wire:model="headerText" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
                           </div>
-
+ 
+                           <div class="border-t border-slate-100 pt-3 space-y-3">
+                               <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider">Opsi Tampilan</label>
+ 
+                               <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                   <div class="relative">
+                                       <input type="checkbox" wire:model.live="showDescription" id="dpShowDescription" class="sr-only peer">
+                                       <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                   </div>
+                                   <div>
+                                       <span class="text-xs font-bold text-slate-700">Tampilkan Deskripsi</span>
+                                    </div>
+                               </label>
+ 
+                               <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                   <div class="relative">
+                                       <input type="checkbox" wire:model.live="showStartingFrom" id="dpShowStartingFrom" class="sr-only peer">
+                                       <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                   </div>
+                                   <div>
+                                       <span class="text-xs font-bold text-slate-700">Tampilkan "Mulai Dari"</span>
+                                   </div>
+                               </label>
+ 
+                               <label class="inline-flex items-center gap-3 cursor-pointer select-none w-full">
+                                   <div class="relative">
+                                       <input type="checkbox" wire:model.live="isDoubleDiscount" id="dpIsDoubleDiscount" class="sr-only peer">
+                                       <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                                   </div>
+                                   <div>
+                                       <span class="text-xs font-bold text-slate-700">Aktifkan Diskon + (Double)</span>
+                                   </div>
+                               </label>
+                           </div>
+                      </div>
+ 
+                      <!-- Col 3: Discount & Price Inputs -->
+                      <div class="space-y-4">
+                          <div class="grid grid-cols-2 gap-3">
+                              <div>
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Diskon %</label>
+                                  <input type="text" wire:model="discountPercent" placeholder="50" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold">
+                                  @error('discountPercent')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
+                              </div>
+ 
+                              <div x-show="$wire.isDoubleDiscount">
+                                  <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Diskon Kedua %</label>
+                                  <input type="text" wire:model="discountPercent2" placeholder="20" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold">
+                                  @error('discountPercent2')
+                                      <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                                  @enderror
+                              </div>
+                          </div>
+ 
                           <div>
-                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Jumlah Cetak (Qty)</label>
-                              <input type="number" min="1" wire:model="qtyPrint" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none transition font-semibold">
-                              @error('qtyPrint')
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Promo (Rp)</label>
+                              <input type="text" wire:model="primaryPrice" placeholder="295000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold text-[#dc2626]">
+                              @error('primaryPrice')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
+ 
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli / Coret (Rp)</label>
+                              <input type="text" wire:model="secondaryPrice" placeholder="589900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 font-bold text-slate-600">
+                              @error('secondaryPrice')
                                   <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
                               @enderror
                           </div>
                       </div>
-
-                      <!-- Col 3: Comparators -->
-                      <div class="space-y-4">
-                          <div class="border-t border-slate-100 pt-3 space-y-3">
-                              <div class="text-[10px] font-bold text-indigo-600 uppercase tracking-wide">Item Komparator (Pilihan)</div>
-                              <div class="grid grid-cols-2 gap-2">
-                                  <div class="space-y-1.5">
-                                      <input type="text" wire:model="item1Name" placeholder="Item 1" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                      <input type="text" wire:model="item1OldPrice" placeholder="Harga Asli" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                      <input type="text" wire:model="item1Price" placeholder="Harga Promo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                  </div>
-                                  
-                                  <div class="space-y-1.5">
-                                      <input type="text" wire:model="item2Name" placeholder="Item 2" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                      <input type="text" wire:model="item2OldPrice" placeholder="Harga Asli" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                      <input type="text" wire:model="item2Price" placeholder="Harga Promo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs">
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
+ 
                   </div>
-
+ 
                   <!-- Footer Buttons -->
                   <div class="flex justify-end gap-3 border-t border-slate-100 pt-4 mt-6">
                       <button type="button" @click="open = false" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl text-xs transition duration-150">
@@ -511,7 +548,7 @@ new class extends Component
               </form>
          </div>
     </div>
-
+ 
     <!-- NESTED FEATURE PREVIEW MODAL -->
     <livewire:a3.discount-percent.preview />
 </div>

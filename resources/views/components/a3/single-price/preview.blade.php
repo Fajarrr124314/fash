@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use App\Models\Pop;
 use Livewire\Component;
@@ -20,7 +20,8 @@ new class extends Component
         $pop = Pop::find($id);
         if ($pop && $pop->frame_size === 'A3' && $pop->layout_type === 'single_price') {
             $this->activePreviewPop = $pop->toArray();
-            $this->previewQueue = [$this->activePreviewPop];
+            $qty = max(1, (int)($pop->qty_print ?? 1));
+            $this->previewQueue = array_fill(0, $qty, $this->activePreviewPop);
             $this->frameSize = $pop->frame_size;
             $this->showModal = true;
         }
@@ -120,7 +121,7 @@ new class extends Component
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 24px 24px 0 24px;
+            margin: 22px 22px 0 22px;
             border-radius: 0px;
             height: 105px;
             box-sizing: border-box;
@@ -135,7 +136,7 @@ new class extends Component
         }
         
         .pop-card-a3 .brand-name-a3 {
-            font-size: 72pt !important;
+            font-size: 65pt !important;
             font-weight: 700 !important;
             text-transform: uppercase;
             color: black !important;
@@ -146,7 +147,7 @@ new class extends Component
         }
         
         .pop-card-a3 .product-desc-a3 {
-            font-size: 28pt !important;
+            font-size: 30pt !important;
             font-weight: 400 !important;
             text-transform: uppercase;
             color: #334155 !important;
@@ -173,61 +174,105 @@ new class extends Component
         }
         
         .pop-card-a3 .price-rp-a3 {
-            font-size: 30pt !important;
+            font-size: 28pt !important;
             font-weight: 400 !important;
             color: #000000ff !important;
-            margin-top: 10px;
+            margin-top: 11px;
             margin-right: 3px;
             line-height: 1;
         }
         
         .pop-card-a3 .price-base-a3 {
-            font-size: 190pt !important;
+            font-size: 198pt !important;
             font-weight: 700 !important;
             letter-spacing: -3px;
             line-height: 0.8;
         }
         
         .pop-card-a3 .price-suffix-a3 {
-            font-size: 100pt !important;
+            font-size: 135pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 3px;
+        }
+        
+        .pop-card-a3 .double-price-wrapper-a3 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 3px;
+            margin-bottom: 3px;
+            gap: 20px;
+        }
+        
+        .pop-card-a3 .double-price-row-a3 {
+            display: flex;
+            align-items: flex-start;
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            line-height: 0.85;
+        }
+        
+        .pop-card-a3 .double-price-rp-a3 {
+            font-size: 26pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            margin-top: 8px;
+            margin-right: 3px;
+            line-height: 1;
+        }
+        
+        .pop-card-a3 .double-price-base-a3 {
+            font-size: 170pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -2px;
+            line-height: 0.8;
+        }
+        
+        .pop-card-a3 .double-price-suffix-a3 {
+            font-size: 115pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+        }
+        
+        .pop-card-a3 .double-price-sd-a3 {
+            font-size: 40pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: 0.5px;
         }
         
         @media print {
             body, html {
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
+                width: 210mm !important;
+                height: 297mm !important;
                 background: white !important;
                 overflow: hidden !important;
             }
             .no-print {
                 display: none !important;
             }
-            .print-area-wrapper-modal {
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                background: white !important;
-                z-index: 99999 !important;
+            .pop-card-a3 {
+                width: 210mm !important;
+                height: 297mm !important;
+                margin: 0 !important;
+                border: none !important;
+                box-shadow: none !important;
+                box-sizing: border-box !important;
             }
             .pop-card-preview {
                 box-shadow: none !important;
                 border: none !important;
-                margin: 0 auto !important;
                 padding: 0px !important;
-            }
-            .print-card-item-modal {
-                page-break-after: always;
-                page-break-inside: avoid;
             }
         }
      
@@ -252,7 +297,7 @@ new class extends Component
             .pop-card-preview {
                 transform-origin: top center;
                 transform: scale(0.32);
-                margin-bottom: calc((210mm * -0.68)) !important;
+                margin-bottom: calc((297mm * -0.68)) !important;
             }
             .preview-scroll-area {
                 min-height: 100px;
@@ -262,7 +307,7 @@ new class extends Component
             .pop-card-preview {
                 transform-origin: top center;
                 transform: scale(0.45);
-                margin-bottom: calc((210mm * -0.55)) !important;
+                margin-bottom: calc((297mm * -0.55)) !important;
             }
             .preview-scroll-area {
                 min-height: 160px;
@@ -278,7 +323,7 @@ new class extends Component
           <!-- Modal Header -->
           <div class="flex justify-between items-center border-b border-slate-100 pb-3">
               <div>
-                  <h3 class="text-base font-extrabold text-slate-900">Pratinjau Desain POP A3 - Harga Tunggal</h3>
+                  <h3 class="text-base font-extrabold text-slate-900">Pratinjau Desain POP A3 - Non Promo</h3>
                   <p class="text-xs text-slate-500 font-medium">Ukuran frame cetak: <span class="font-bold text-indigo-600 uppercase">A3 (Print A4 Portrait)</span></p>
               </div>
               <button type="button" @click="open = false" class="text-slate-400 hover:text-slate-600 transition">
@@ -304,25 +349,51 @@ new class extends Component
                            <!-- Brand Block -->
                            <div>
                                <div class="brand-name-a3">{{ $activePreviewPop['brand_name'] }}</div>
-                               <div class="product-desc-a3">{{ $activePreviewPop['product_desc'] }}</div>
+                               @if(!empty($activePreviewPop['product_desc']))
+                                   <div class="product-desc-a3">{{ $activePreviewPop['product_desc'] }}</div>
+                               @endif
                            </div>
 
                            <!-- Price Area -->
                            <div class="price-area-a3">
                                @php
+                                   $isDouble = $activePreviewPop['additional_data']['is_double_price'] ?? false;
+                                   $showSd = $activePreviewPop['additional_data']['show_sd'] ?? false;
                                    $priceParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                @endphp
-                               <div class="price-wrapper-a3">
-                                   <span class="price-rp-a3">Rp</span>
-                                   <span class="price-base-a3">{{ $priceParts['base'] }}</span>
-                                   <span class="price-suffix-a3">{{ $priceParts['suffix'] }}</span>
-                                </div>
+                               @if($isDouble && !empty($activePreviewPop['secondary_price']))
+                                   @php
+                                       $price2Parts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
+                                   @endphp
+                                   <div class="double-price-wrapper-a3">
+                                       <div class="double-price-row-a3">
+                                           <span class="double-price-rp-a3">Rp</span>
+                                           <span class="double-price-base-a3">{{ $priceParts['base'] }}</span>
+                                           <span class="double-price-suffix-a3">{{ $priceParts['suffix'] }}</span>
+                                       </div>
+                                       @if($showSd)
+                                           <div class="double-price-sd-a3">S/D</div>
+                                       @endif
+                                       <div class="double-price-row-a3">
+                                           <span class="double-price-rp-a3">Rp</span>
+                                           <span class="double-price-base-a3">{{ $price2Parts['base'] }}</span>
+                                           <span class="double-price-suffix-a3">{{ $price2Parts['suffix'] }}</span>
+                                       </div>
+                                   </div>
+                               @else
+                                   <div class="price-wrapper-a3">
+                                       <span class="price-rp-a3">Rp</span>
+                                       <span class="price-base-a3">{{ $priceParts['base'] }}</span>
+                                       <span class="price-suffix-a3">{{ $priceParts['suffix'] }}</span>
+                                    </div>
+                               @endif
                            </div>
-                        <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-                        </div>
-                           <div class="h-6"></div>
+
+                            <!-- Footer Image -->
+                            <div style="text-align:center; padding-bottom: 7px; padding-top: 140px; line-height:0;">
+                                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 25px; width: auto; display: inline-block; object-fit: contain;">
+                            </div>
+                            <div style="height: 28px;"></div>
                        </div>
                   </div>
               @endif
@@ -334,7 +405,7 @@ new class extends Component
                   Tutup
               </button>
               <button type="button" 
-                      @click="window.print();"
+                      @click="window.printA3SinglePrice()"
                       class="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition duration-150 flex items-center gap-1.5 shadow-md shadow-indigo-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
@@ -345,41 +416,111 @@ new class extends Component
      </div>
 </div>
 
-<!-- ==================== PRINT CONTEXT WRAPPER (HIDDEN ON SCREEN) ==================== -->
-<div id="pop-print-area" class="print-only hidden">
+@script
+<script>
+window.printA3SinglePrice = function() {
+    var area = document.getElementById('pop-print-area-a3sp');
+    if (!area) { alert('Data print tidak ditemukan.'); return; }
+    var html = area.innerHTML;
+    if (!html.trim()) { alert('Tidak ada data untuk dicetak.'); return; }
+
+    var win = window.open('', '_blank', 'width=1200,height=900');
+    if (!win) { alert('Popup diblokir browser! Izinkan popup untuk domain ini.'); return; }
+    win.document.open();
+    win.document.write(
+        '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+        + '<style>'
+        + '@page { size: 210mm 297mm portrait; margin: 0; }'
+        + '* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; margin: 0; padding: 0; }'
+        + 'body { background: white; font-family: \'Arial Narrow\', Arial, sans-serif; }'
+        + '.pop-card-a3 { width: 210mm; height: 297mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; background-color: white; color: black; overflow: hidden; position: relative; page-break-after: always; page-break-inside: avoid; }'
+        + '.header-banner-a3 { background-color: #dc2626 !important; color: white !important; text-align: center; text-transform: uppercase; display: flex; align-items: center; justify-content: center; margin: 22px 22px 0 22px; height: 105px; box-sizing: border-box; padding: 0 10px; }'
+        + '.header-banner-a3 span { font-size: 65pt !important; font-weight: 700 !important; line-height: 1; letter-spacing: -0.5px; }'
+        + '.brand-name-a3 { font-size: 65pt !important; font-weight: 700 !important; text-transform: uppercase; color: black !important; line-height: 1; margin-top: 16px; letter-spacing: -0.5px; text-align: center; }'
+        + '.product-desc-a3 { font-size: 30pt !important; font-weight: 400 !important; text-transform: uppercase; color: #334155 !important; line-height: 1.2; margin-top: 4px; text-align: center; }'
+        + '.price-area-a3 { display: flex; align-items: center; justify-content: center; flex-grow: 1; margin-top: 6px; margin-bottom: 6px; }'
+        + '.price-wrapper-a3 { display: flex; align-items: flex-start; color: #dc2626 !important; font-weight: 700 !important; line-height: 0.85; }'
+        + '.price-rp-a3 { font-size: 28pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 11px; margin-right: 3px; line-height: 1; }'
+        + '.price-base-a3 { font-size: 198pt !important; font-weight: 700 !important; letter-spacing: -3px; line-height: 0.8; }'
+        + '.price-suffix-a3 { font-size: 135pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 3px; }'
+        + '.double-price-wrapper-a3 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 3px; margin-bottom: 3px; gap: 20px; }'
+        + '.double-price-row-a3 { display: flex; align-items: flex-start; color: #dc2626 !important; font-weight: 700 !important; line-height: 0.85; }'
+        + '.double-price-rp-a3 { font-size: 26pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 8px; margin-right: 3px; line-height: 1; }'
+        + '.double-price-base-a3 { font-size: 170pt !important; font-weight: 700 !important; letter-spacing: -2px; line-height: 0.8; }'
+        + '.double-price-suffix-a3 { font-size: 115pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; }'
+        + '.double-price-sd-a3 { font-size: 40pt !important; font-weight: 400 !important; color: #000000ff !important; text-transform: uppercase; text-align: center; margin: 0; line-height: 1; letter-spacing: 0.5px; }'
+        + '</style>'
+        + '</head><body>' + html + '</body></html>'
+    );
+    win.document.close();
+    win.focus();
+    setTimeout(function() {
+        win.print();
+        setTimeout(function() { win.close(); }, 500);
+    }, 400);
+};
+</script>
+@endscript
+
+<!-- ==================== PRINT DATA AREA (hidden off-screen) ==================== -->
+<div id="pop-print-area-a3sp" style="position:absolute;left:-99999px;top:0;width:210mm;overflow:hidden;">
     @foreach($previewQueue as $pq)
-        <div class="pop-card-preview bg-white relative flex flex-col justify-between overflow-hidden print-card-item-modal pop-card-a3"
-             style="width: 210mm; height: 297mm; margin: 0 auto; page-break-after: always; page-break-inside: avoid; border: none; box-shadow: none; box-sizing: border-box; padding: 0px; font-family: 'Arial Narrow', 'Archivo Narrow', Arial, sans-serif;">
-            
+        <div class="pop-card-a3">
             <!-- Header Banner -->
             <div class="header-banner-a3">
                 <span>{{ $pq['header_text'] ?: 'HARGA SPESIAL' }}</span>
             </div>
 
             <!-- Content Body -->
-            <div class="flex-grow flex flex-col justify-between py-5 px-6 leading-none">
+            <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 22px 28px 22px 28px; line-height: none;">
                 <!-- Brand Block -->
                 <div>
-                    <div class="brand-name-a3">{{ $pq['brand_name'] }}</div>
-                    <div class="product-desc-a3">{{ $pq['product_desc'] }}</div>
+                    <div class="brand-name-a3" style="margin-top: 16px;">{{ $pq['brand_name'] }}</div>
+                    @if(!empty($pq['product_desc']))
+                        <div class="product-desc-a3">{{ $pq['product_desc'] }}</div>
+                    @endif
                 </div>
 
                 <!-- Price Area -->
                 <div class="price-area-a3">
                     @php
-                        $priceParts = $this->formatPriceStatic($pq['primary_price']);
+                        $pqIsDouble = $pq['additional_data']['is_double_price'] ?? false;
+                        $pqShowSd = $pq['additional_data']['show_sd'] ?? false;
+                        $pqPriceParts = $this->formatPriceStatic($pq['primary_price']);
                     @endphp
-                    <div class="price-wrapper-a3">
-                        <span class="price-rp-a3">Rp</span>
-                        <span class="price-base-a3">{{ $priceParts['base'] }}</span>
-                        <span class="price-suffix-a3">{{ $priceParts['suffix'] }}</span>
-                    </div>
+                    @if($pqIsDouble && !empty($pq['secondary_price']))
+                        @php
+                            $pqPrice2Parts = $this->formatPriceStatic($pq['secondary_price']);
+                        @endphp
+                        <div class="double-price-wrapper-a3">
+                            <div class="double-price-row-a3">
+                                <span class="double-price-rp-a3">Rp</span>
+                                <span class="double-price-base-a3">{{ $pqPriceParts['base'] }}</span>
+                                <span class="double-price-suffix-a3">{{ $pqPriceParts['suffix'] }}</span>
+                            </div>
+                            @if($pqShowSd)
+                                <div class="double-price-sd-a3">S/D</div>
+                            @endif
+                            <div class="double-price-row-a3">
+                                <span class="double-price-rp-a3">Rp</span>
+                                <span class="double-price-base-a3">{{ $pqPrice2Parts['base'] }}</span>
+                                <span class="double-price-suffix-a3">{{ $pqPrice2Parts['suffix'] }}</span>
+                            </div>
+                        </div>
+                    @else
+                        <div class="price-wrapper-a3">
+                            <span class="price-rp-a3">Rp</span>
+                            <span class="price-base-a3">{{ $pqPriceParts['base'] }}</span>
+                            <span class="price-suffix-a3">{{ $pqPriceParts['suffix'] }}</span>
+                        </div>
+                    @endif
                 </div>
-            <!-- Footer Image -->
-            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-            </div>
-                <div class="h-6"></div>
+
+                <!-- Footer Image -->
+                <div style="text-align:center; padding-bottom: 7px; padding-top: 140px; line-height:0;">
+                    <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 25px; width: auto; display: inline-block; object-fit: contain;">
+                </div>
+                <div style="height: 28px;"></div>
             </div>
         </div>
     @endforeach
