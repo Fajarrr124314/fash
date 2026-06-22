@@ -102,7 +102,8 @@ new class extends Component
 
         .coret-diagonal-preview {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: flex-start;
         }
         .coret-diagonal-preview::after {
             content: "";
@@ -194,12 +195,14 @@ new class extends Component
             font-weight: 700 !important;
             line-height: 0.8;
             letter-spacing: -1.5px;
+            color: #dc2626 !important;
         }
         .pop-card-a4 .old-price-suffix-a4 {
             font-size: 72pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 1px;
+            color: #dc2626 !important;
         }
         
         /* promo price styling */
@@ -216,12 +219,14 @@ new class extends Component
             font-weight: 700 !important;
             line-height: 0.8;
             letter-spacing: -2px;
+            color: #dc2626 !important;
         }
         .pop-card-a4 .promo-price-suffix-a4 {
             font-size: 100pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 1px;
+            color: #dc2626 !important;
         }
         
         @media print {
@@ -352,7 +357,7 @@ new class extends Component
                                    $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                    $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
                                @endphp
-                               <div class="flex flex-col items-center justify-center gap-1.5 my-1">
+                               <div class="flex flex-col items-center justify-center gap-4 my-1">
                                    <!-- Old Price Row (Coret) -->
                                    <div class="flex items-start select-none relative">
                                        <span class="old-price-rp-a4">Rp</span>
@@ -424,14 +429,14 @@ window.printA4WasIsPrice = function() {
         + '.brand-name-a4 { font-size: 46pt !important; font-weight: 700 !important; text-transform: uppercase; color: black !important; line-height: 1; margin-top: 12px; letter-spacing: -0.5px; text-align: center; }'
         + '.product-desc-a4 { font-size: 21pt !important; font-weight: 400 !important; text-transform: uppercase; color: #334155 !important; line-height: 1.2; margin-top: 2px; text-align: center; }'
         + '.price-area-a4 { display: flex; align-items: center; justify-content: center; flex-grow: 1; margin-top: 4px; margin-bottom: 4px; }'
-        + '.coret-diagonal-preview { position: relative; display: inline-block; }'
+        + '.coret-diagonal-preview { position: relative; display: inline-flex; align-items: flex-start; }'
         + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 3px; background-color: #000000 !important; transform: rotate(-6deg); }'
         + '.old-price-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: #000000 !important; margin-top: 6px; margin-right: 2px; line-height: 1; }'
-        + '.old-price-base-a4 { font-size: 110pt !important; font-weight: 700 !important; line-height: 0.8; letter-spacing: -1.5px; }'
-        + '.old-price-suffix-a4 { font-size: 72pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; }'
+        + '.old-price-base-a4 { font-size: 110pt !important; font-weight: 700 !important; line-height: 0.8; letter-spacing: -1.5px; color: #dc2626 !important; }'
+        + '.old-price-suffix-a4 { font-size: 72pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '.promo-price-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: #000000 !important; margin-top: 8px; margin-right: 2px; line-height: 1; }'
-        + '.promo-price-base-a4 { font-size: 130pt !important; font-weight: 700 !important; line-height: 0.8; letter-spacing: -2px; }'
-        + '.promo-price-suffix-a4 { font-size: 100pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; }'
+        + '.promo-price-base-a4 { font-size: 130pt !important; font-weight: 700 !important; line-height: 0.8; letter-spacing: -2px; color: #dc2626 !important; }'
+        + '.promo-price-suffix-a4 { font-size: 100pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -470,7 +475,7 @@ window.printA4WasIsPrice = function() {
                                 $promoParts = $this->formatPriceStatic($pq['primary_price']);
                                 $oldParts = $this->formatPriceStatic($pq['secondary_price']);
                             @endphp
-                            <div class="flex flex-col items-center justify-center gap-1.5 my-1">
+                            <div class="flex flex-col items-center justify-center gap-4 my-1">
                                 <!-- Old Price Row (Coret) -->
                                 <div class="flex items-start select-none relative">
                                     <span class="old-price-rp-a4">Rp</span>
