@@ -24,6 +24,10 @@ new class extends Component
     public $unit = 'PCS';
     public $headerText = 'HARGA SPESIAL';
 
+    // 3 Harga State
+    public $isThreePrice = false;
+    public $items = [];
+
     public function mount()
     {
         $this->loadPops();
@@ -75,6 +79,12 @@ new class extends Component
             $this->qtyPrint = $pop->qty_print;
             $this->unit = $pop->unit;
             $this->headerText = $pop->header_text;
+            $this->isThreePrice = $pop->additional_data['is_three_price'] ?? false;
+            $this->items = $pop->additional_data['items'] ?? [
+                ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+                ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+                ['desc' => '', 'old_price' => '', 'promo_price' => '']
+            ];
             
             $this->formTitle = 'Edit POP A4 Was/Is Price';
             $this->showForm = true;
@@ -91,19 +101,38 @@ new class extends Component
         $this->qtyPrint = 1;
         $this->unit = 'PCS';
         $this->headerText = 'HARGA SPESIAL';
+        $this->isThreePrice = false;
+        $this->items = [
+            ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+            ['desc' => '', 'old_price' => '', 'promo_price' => ''],
+            ['desc' => '', 'old_price' => '', 'promo_price' => '']
+        ];
     }
 
     public function save()
     {
-        $this->validate([
+        $rules = [
             'brandName' => 'required|string',
-            'primaryPrice' => 'required|string',
-            'secondaryPrice' => 'required|string',
             'qtyPrint' => 'required|integer|min:1',
             'unit' => 'required|string',
-        ]);
+        ];
+        if ($this->isThreePrice) {
+            $rules['items.0.desc'] = 'required|string';
+            $rules['items.0.old_price'] = 'required|string';
+            $rules['items.0.promo_price'] = 'required|string';
+            $rules['items.1.desc'] = 'required|string';
+            $rules['items.1.old_price'] = 'required|string';
+            $rules['items.1.promo_price'] = 'required|string';
+            $rules['items.2.desc'] = 'required|string';
+            $rules['items.2.old_price'] = 'required|string';
+            $rules['items.2.promo_price'] = 'required|string';
+        } else {
+            $rules['primaryPrice'] = 'required|string';
+            $rules['secondaryPrice'] = 'required|string';
+        }
+        $this->validate($rules);
 
-        $name = $this->brandName . ' - ' . ($this->productDesc ?: 'POP');
+        $name = $this->brandName . ' - ' . ($this->isThreePrice ? '3 Harga Coret' : ($this->productDesc ?: 'POP'));
         $sku = $this->popId ? Pop::find($this->popId)->sku : rand(10000000, 99999999);
 
         $data = [
@@ -113,12 +142,15 @@ new class extends Component
             'layout_type' => 'was_is_price',
             'header_text' => $this->headerText,
             'brand_name' => $this->brandName,
-            'product_desc' => $this->productDesc,
-            'primary_price' => $this->primaryPrice,
-            'secondary_price' => $this->secondaryPrice,
+            'product_desc' => $this->isThreePrice ? '' : $this->productDesc,
+            'primary_price' => $this->isThreePrice ? '' : $this->primaryPrice,
+            'secondary_price' => $this->isThreePrice ? '' : $this->secondaryPrice,
             'qty_print' => $this->qtyPrint,
             'unit' => $this->unit,
-            'additional_data' => null
+            'additional_data' => [
+                'is_three_price' => $this->isThreePrice,
+                'items' => $this->isThreePrice ? $this->items : null
+            ]
         ];
 
         if ($this->popId) {
@@ -355,22 +387,44 @@ new class extends Component
                                 <td class="py-3 px-4">
                                     <div class="flex flex-col">
                                         <span class="font-bold text-slate-900 uppercase text-[13px]">{{ $pop['brand_name'] }}</span>
-                                        <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                        @if($pop['additional_data']['is_three_price'] ?? false)
+                                            <span class="text-[9px] text-indigo-600 font-bold tracking-wide uppercase">Mode 3 Harga</span>
+                                        @else
+                                            <span class="text-[10px] text-slate-400 font-medium tracking-wide uppercase">{{ $pop['product_desc'] ?: '-' }}</span>
+                                        @endif
                                     </div>
                                 </td>
                                 
                                 <td class="py-3 px-4 text-right font-medium text-slate-500 line-through">
-                                    @php
-                                        $oldP = $this->formatPriceStatic($pop['secondary_price']);
-                                    @endphp
-                                    Rp {{ $oldP['base'] . $oldP['suffix'] }}
+                                    @if($pop['additional_data']['is_three_price'] ?? false)
+                                        <div class="flex flex-col text-[10px] items-end gap-0.5">
+                                            @foreach($pop['additional_data']['items'] ?? [] as $it)
+                                                @php $op = $this->formatPriceStatic($it['old_price'] ?? ''); @endphp
+                                                <span>Rp {{ $op['base'] . $op['suffix'] }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        @php
+                                            $oldP = $this->formatPriceStatic($pop['secondary_price']);
+                                        @endphp
+                                        Rp {{ $oldP['base'] . $oldP['suffix'] }}
+                                    @endif
                                 </td>
 
                                 <td class="py-3 px-4 text-right font-bold text-[#dc2626] text-sm">
-                                    @php
-                                        $prc = $this->formatPriceStatic($pop['primary_price']);
-                                    @endphp
-                                    Rp {{ $prc['base'] . $prc['suffix'] }}
+                                    @if($pop['additional_data']['is_three_price'] ?? false)
+                                        <div class="flex flex-col text-[10px] items-end gap-0.5">
+                                            @foreach($pop['additional_data']['items'] ?? [] as $it)
+                                                @php $pp = $this->formatPriceStatic($it['promo_price'] ?? ''); @endphp
+                                                <span>Rp {{ $pp['base'] . $pp['suffix'] }}</span>
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        @php
+                                            $prc = $this->formatPriceStatic($pop['primary_price']);
+                                        @endphp
+                                        Rp {{ $prc['base'] . $prc['suffix'] }}
+                                    @endif
                                 </td>
                                 
                                 <td class="py-3 px-4 text-center text-slate-500 font-semibold">
@@ -419,26 +473,62 @@ new class extends Component
                           @enderror
                       </div>
                       
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
-                          <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                      <div class="md:col-span-2 border-b border-slate-100 pb-4 mb-2 flex items-center">
+                          <label class="flex items-center gap-2 cursor-pointer select-none">
+                              <input type="checkbox" wire:model.live="isThreePrice" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                              <span class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Gunakan 3 Harga (Was/Is)</span>
+                          </label>
                       </div>
 
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Jual / Promo</label>
-                          <input type="text" wire:model="primaryPrice" placeholder="e.g. 189900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('primaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
+                      @if($isThreePrice)
+                          <!-- Three Price Fields -->
+                          <div class="md:col-span-2 space-y-4 bg-slate-50 p-4 rounded-2xl border border-slate-150">
+                              @for($i = 0; $i < 3; $i++)
+                                  <div class="space-y-3 pb-3 {{ $i < 2 ? 'border-b border-slate-200' : '' }}">
+                                      <h4 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">Item {{ $i + 1 }}</h4>
+                                      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                          <div class="md:col-span-1">
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Deskripsi Item {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.desc" placeholder="e.g. KEMEJA LENGAN PENDEK" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-indigo-500 uppercase">
+                                              @error("items.{$i}.desc") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                          <div>
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga Coret {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.old_price" placeholder="e.g. 249900" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                              @error("items.{$i}.old_price") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                          <div>
+                                              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Harga Promo {{ $i + 1 }}</label>
+                                              <input type="text" wire:model="items.{{ $i }}.promo_price" placeholder="e.g. 149900" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                              @error("items.{$i}.promo_price") <span class="text-red-500 text-[10px] mt-0.5 block font-semibold">{{ $message }}</span> @enderror
+                                          </div>
+                                      </div>
+                                  </div>
+                              @endfor
+                          </div>
+                      @else
+                          <!-- Single Price Fields -->
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Deskripsi Produk</label>
+                              <input type="text" wire:model="productDesc" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm uppercase focus:border-indigo-500 focus:outline-none transition font-semibold">
+                          </div>
 
-                      <div>
-                          <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli (Coret)</label>
-                          <input type="text" wire:model="secondaryPrice" placeholder="e.g. 349900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
-                          @error('secondaryPrice')
-                              <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
-                          @enderror
-                      </div>
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Jual / Promo</label>
+                              <input type="text" wire:model="primaryPrice" placeholder="e.g. 189900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
+                              @error('primaryPrice')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
+
+                          <div>
+                              <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Harga Asli (Coret)</label>
+                              <input type="text" wire:model="secondaryPrice" placeholder="e.g. 349900" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 focus:outline-none font-bold">
+                              @error('secondaryPrice')
+                                  <span class="text-red-500 text-xs mt-1 block font-semibold">{{ $message }}</span>
+                              @enderror
+                          </div>
+                      @endif
 
                       <div>
                           <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Unit</label>

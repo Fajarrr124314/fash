@@ -229,6 +229,111 @@ new class extends Component
             color: #dc2626 !important;
         }
         
+        /* 3 Harga Mode Styling */
+        .pop-card-a4 .three-price-container-a4 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            gap: 28px;
+        }
+        .pop-card-a4 .three-price-item-a4 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+        .pop-card-a4 .three-price-desc-a4 {
+            font-size: 20pt !important;
+            font-weight: 400 !important;
+            text-transform: uppercase;
+            color: #000000ff !important;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.1;
+            letter-spacing: -0.2px;
+        }
+        .pop-card-a4 .three-price-row-a4 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .pop-card-a4 .three-price-old-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.85;
+        }
+        .pop-card-a4 .three-price-old-rp-a4 {
+            font-size: 13pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            margin-top: 4px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+        .pop-card-a4 .three-price-old-base-a4 {
+            font-size: 52pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -1px;
+            line-height: 0.8;
+            color: #dc2626 !important;
+        }
+        .pop-card-a4 .three-price-old-suffix-a4 {
+            font-size: 34pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+            color: #dc2626 !important;
+        }
+        .pop-card-a4 .coret-diagonal-three-a4 {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-start;
+        }
+        .pop-card-a4 .coret-diagonal-three-a4::after {
+            content: "";
+            position: absolute;
+            left: -3%;
+            right: -3%;
+            top: 50%;
+            height: 2.5px;
+            background-color: #000000 !important;
+            transform: rotate(-6deg);
+        }
+        .pop-card-a4 .three-price-promo-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.85;
+        }
+        .pop-card-a4 .three-price-promo-rp-a4 {
+            font-size: 13pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            margin-top: 4px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+        .pop-card-a4 .three-price-promo-base-a4 {
+            font-size: 75pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -1.5px;
+            line-height: 0.8;
+            color: #dc2626 !important;
+        }
+        .pop-card-a4 .three-price-promo-suffix-a4 {
+            font-size: 51pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+            color: #dc2626 !important;
+        }
+        
         @media print {
             body, html {
                 margin: 0 !important;
@@ -345,18 +450,53 @@ new class extends Component
 
                        <!-- Content Body -->
                        <div class="flex-grow flex flex-col justify-between py-4 px-5 leading-none">
-                           <!-- Brand Block -->
-                           <div>
-                               <div class="brand-name-a4">{{ $activePreviewPop['brand_name'] }}</div>
-                               <div class="product-desc-a4">{{ $activePreviewPop['product_desc'] }}</div>
-                           </div>
+                            <!-- Brand Block -->
+                            <div>
+                                <div class="brand-name-a4">{{ $activePreviewPop['brand_name'] }}</div>
+                                @if(!($activePreviewPop['additional_data']['is_three_price'] ?? false))
+                                    <div class="product-desc-a4">{{ $activePreviewPop['product_desc'] }}</div>
+                                @endif
+                            </div>
 
                            <!-- Price Area -->
                            <div class="price-area-a4">
-                               @php
-                                   $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
-                                   $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
-                               @endphp
+                               @if($activePreviewPop['additional_data']['is_three_price'] ?? false)
+                                   <div class="three-price-container-a4">
+                                       @foreach($activePreviewPop['additional_data']['items'] ?? [] as $item)
+                                           <div class="three-price-item-a4">
+                                               <!-- Description -->
+                                               <div class="three-price-desc-a4">{{ $item['desc'] }}</div>
+                                               
+                                               <!-- Price Row -->
+                                               <div class="three-price-row-a4">
+                                                   <!-- Old Price (Left) -->
+                                                   @php
+                                                       $oldParts = $this->formatPriceStatic($item['old_price'] ?? '');
+                                                       $promoParts = $this->formatPriceStatic($item['promo_price'] ?? '');
+                                                   @endphp
+                                                   <div class="three-price-old-wrapper-a4">
+                                                       <span class="three-price-old-rp-a4">Rp</span>
+                                                       <div class="coret-diagonal-three-a4">
+                                                           <span class="three-price-old-base-a4">{{ $oldParts['base'] }}</span>
+                                                           <span class="three-price-old-suffix-a4">{{ $oldParts['suffix'] }}</span>
+                                                       </div>
+                                                   </div>
+                                                   
+                                                   <!-- Promo Price (Right) -->
+                                                   <div class="three-price-promo-wrapper-a4">
+                                                       <span class="three-price-promo-rp-a4">Rp</span>
+                                                       <span class="three-price-promo-base-a4">{{ $promoParts['base'] }}</span>
+                                                       <span class="three-price-promo-suffix-a4">{{ $promoParts['suffix'] }}</span>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                       @endforeach
+                                   </div>
+                               @else
+                                   @php
+                                       $promoParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
+                                       $oldParts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
+                                   @endphp
                                <div class="flex flex-col items-center justify-center gap-4 my-1">
                                    <!-- Old Price Row (Coret) -->
                                    <div class="flex items-start select-none relative">
@@ -375,6 +515,7 @@ new class extends Component
                                        </div>
                                    </div>
                                </div>
+                               @endif
                            </div>
                         <!-- Footer Image -->
                         <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
@@ -437,6 +578,20 @@ window.printA4WasIsPrice = function() {
         + '.promo-price-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: #000000 !important; margin-top: 8px; margin-right: 2px; line-height: 1; }'
         + '.promo-price-base-a4 { font-size: 130pt !important; font-weight: 700 !important; line-height: 0.8; letter-spacing: -2px; color: #dc2626 !important; }'
         + '.promo-price-suffix-a4 { font-size: 100pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
+        + '.three-price-container-a4 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 10px; margin-bottom: 10px; gap: 28px; }'
+        + '.three-price-item-a4 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }'
+        + '.three-price-desc-a4 { font-size: 20pt !important; font-weight: 400 !important; text-transform: uppercase; color: #000000ff !important; text-align: center; margin-bottom: 8px; line-height: 1.1; letter-spacing: -0.2px; }'
+        + '.three-price-row-a4 { display: flex; align-items: center; justify-content: center; gap: 20px; width: 100%; }'
+        + '.three-price-old-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
+        + '.three-price-old-rp-a4 { font-size: 13pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 4px; margin-right: 2px; line-height: 1; }'
+        + '.three-price-old-base-a4 { font-size: 52pt !important; font-weight: 700 !important; letter-spacing: -1px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.three-price-old-suffix-a4 { font-size: 34pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
+        + '.coret-diagonal-three-a4 { position: relative; display: inline-flex; align-items: flex-start; }'
+        + '.coret-diagonal-three-a4::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 2.5px; background-color: #000000 !important; transform: rotate(-6deg); }'
+        + '.three-price-promo-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
+        + '.three-price-promo-rp-a4 { font-size: 13pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 4px; margin-right: 2px; line-height: 1; }'
+        + '.three-price-promo-base-a4 { font-size: 75pt !important; font-weight: 700 !important; letter-spacing: -1.5px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.three-price-promo-suffix-a4 { font-size: 51pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -466,33 +621,69 @@ window.printA4WasIsPrice = function() {
                         <!-- Brand Block -->
                         <div>
                             <div class="brand-name-a4">{{ $pq['brand_name'] }}</div>
-                            <div class="product-desc-a4">{{ $pq['product_desc'] }}</div>
+                            @if(!($pq['additional_data']['is_three_price'] ?? false))
+                                <div class="product-desc-a4">{{ $pq['product_desc'] }}</div>
+                            @endif
                         </div>
 
                         <!-- Price Area -->
                         <div class="price-area-a4">
-                            @php
-                                $promoParts = $this->formatPriceStatic($pq['primary_price']);
-                                $oldParts = $this->formatPriceStatic($pq['secondary_price']);
-                            @endphp
-                            <div class="flex flex-col items-center justify-center gap-4 my-1">
-                                <!-- Old Price Row (Coret) -->
-                                <div class="flex items-start select-none relative">
-                                    <span class="old-price-rp-a4">Rp</span>
-                                    <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
-                                        <span class="old-price-base-a4">{{ $oldParts['base'] }}</span>
-                                        <span class="old-price-suffix-a4">{{ $oldParts['suffix'] }}</span>
+                            @if($pq['additional_data']['is_three_price'] ?? false)
+                                <div class="three-price-container-a4">
+                                    @foreach($pq['additional_data']['items'] ?? [] as $item)
+                                        <div class="three-price-item-a4">
+                                            <!-- Description -->
+                                            <div class="three-price-desc-a4">{{ $item['desc'] }}</div>
+                                            
+                                            <!-- Price Row -->
+                                            <div class="three-price-row-a4">
+                                                <!-- Old Price (Left) -->
+                                                @php
+                                                    $oldParts = $this->formatPriceStatic($item['old_price'] ?? '');
+                                                    $promoParts = $this->formatPriceStatic($item['promo_price'] ?? '');
+                                                @endphp
+                                                <div class="three-price-old-wrapper-a4">
+                                                    <span class="three-price-old-rp-a4">Rp</span>
+                                                    <div class="coret-diagonal-three-a4">
+                                                        <span class="three-price-old-base-a4">{{ $oldParts['base'] }}</span>
+                                                        <span class="three-price-old-suffix-a4">{{ $oldParts['suffix'] }}</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Promo Price (Right) -->
+                                                <div class="three-price-promo-wrapper-a4">
+                                                    <span class="three-price-promo-rp-a4">Rp</span>
+                                                    <span class="three-price-promo-base-a4">{{ $promoParts['base'] }}</span>
+                                                    <span class="three-price-promo-suffix-a4">{{ $promoParts['suffix'] }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                @php
+                                    $promoParts = $this->formatPriceStatic($pq['primary_price']);
+                                    $oldParts = $this->formatPriceStatic($pq['secondary_price']);
+                                @endphp
+                                <div class="flex flex-col items-center justify-center gap-4 my-1">
+                                    <!-- Old Price Row (Coret) -->
+                                    <div class="flex items-start select-none relative">
+                                        <span class="old-price-rp-a4">Rp</span>
+                                        <div class="coret-diagonal-preview flex items-start text-[#dc2626] font-bold">
+                                            <span class="old-price-base-a4">{{ $oldParts['base'] }}</span>
+                                            <span class="old-price-suffix-a4">{{ $oldParts['suffix'] }}</span>
+                                        </div>
+                                    </div>
+                                    <!-- Promo Price Row -->
+                                    <div class="flex items-start select-none">
+                                        <span class="promo-price-rp-a4">Rp</span>
+                                        <div class="flex items-start text-[#dc2626] font-bold">
+                                            <span class="promo-price-base-a4">{{ $promoParts['base'] }}</span>
+                                            <span class="promo-price-suffix-a4">{{ $promoParts['suffix'] }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                                <!-- Promo Price Row -->
-                                <div class="flex items-start select-none">
-                                    <span class="promo-price-rp-a4">Rp</span>
-                                    <div class="flex items-start text-[#dc2626] font-bold">
-                                        <span class="promo-price-base-a4">{{ $promoParts['base'] }}</span>
-                                        <span class="promo-price-suffix-a4">{{ $promoParts['suffix'] }}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            @endif
                         </div>
                         <!-- Footer Image -->
                         <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
