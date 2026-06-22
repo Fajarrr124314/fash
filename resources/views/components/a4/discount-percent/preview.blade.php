@@ -256,7 +256,8 @@ new class extends Component
             font-weight: 400 !important;
             color: black !important;
             text-align: center;
-            margin-bottom: 6px;
+            margin-top: -10px;
+            margin-bottom: 16px;
             line-height: 1;
         }
         
@@ -275,22 +276,22 @@ new class extends Component
             line-height: 0.85;
         }
         .pop-card-a4 .price-old-rp-a4 {
-            font-size: 18pt !important;
+            font-size: 16pt !important;
             font-weight: 400 !important;
             color: black !important;
-            margin-top: 5px;
+            margin-top: 4px;
             margin-right: 2px;
             line-height: 1;
         }
         .pop-card-a4 .price-old-base-a4 {
-            font-size: 70pt !important;
+            font-size: 60pt !important;
             font-weight: 700 !important;
             letter-spacing: -1px;
             line-height: 0.8;
             color: #dc2626 !important;
         }
         .pop-card-a4 .price-old-suffix-a4 {
-            font-size: 40pt !important;
+            font-size: 34pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 1px;
@@ -320,22 +321,22 @@ new class extends Component
             line-height: 0.85;
         }
         .pop-card-a4 .price-promo-rp-a4 {
-            font-size: 20pt !important;
+            font-size: 19pt !important;
             font-weight: 400 !important;
             color: black !important;
-            margin-top: 6px;
+            margin-top: 5px;
             margin-right: 2px;
             line-height: 1;
         }
         .pop-card-a4 .price-promo-base-a4 {
-            font-size: 75pt !important;
+            font-size: 70pt !important;
             font-weight: 700 !important;
             letter-spacing: -1.5px;
             line-height: 0.8;
             color: #dc2626 !important;
         }
         .pop-card-a4 .price-promo-suffix-a4 {
-            font-size: 44pt !important;
+            font-size: 41pt !important;
             font-weight: 700 !important;
             line-height: 0.8;
             margin-top: 1px;
@@ -524,10 +525,10 @@ new class extends Component
                             </div>
 
                             <!-- Footer Image -->
-                            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                            <div style="text-align:center; padding-bottom: 5px; padding-top: 100px; line-height:0;">
                                 <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                             </div>
-                            <div style="height: 70px;"></div>
+                            <div style="height: 20px;"></div>
                        </div>
                   </div>
               @endif
@@ -589,18 +590,18 @@ window.printA4DiscountPercent = function() {
         + '.double-discount-second-base-a4 { font-size: 145pt !important; line-height: 0.8; letter-spacing: -3px; }'
         + '.double-discount-second-percent-a4 { font-size: 32pt !important; margin-top: 8px; margin-left: 1px; }'
         + '.bottom-prices-container-a4 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 6px; margin-bottom: 6px; }'
-        + '.starting-from-a4 { font-size: 19pt !important; font-weight: 400 !important; color: black !important; text-align: center; margin-bottom: 6px; line-height: 1; }'
+        + '.starting-from-a4 { font-size: 19pt !important; font-weight: 400 !important; color: black !important; text-align: center; margin-top: -10px; margin-bottom: 16px; line-height: 1; }'
         + '.prices-row-a4 { display: flex; align-items: flex-end; justify-content: center; gap: 16px; width: 100%; }'
         + '.price-old-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
-        + '.price-old-rp-a4 { font-size: 18pt !important; font-weight: 400 !important; color: black !important; margin-top: 5px; margin-right: 2px; line-height: 1; }'
-        + '.price-old-base-a4 { font-size: 70pt !important; font-weight: 700 !important; letter-spacing: -1px; line-height: 0.8; color: #dc2626 !important; }'
-        + '.price-old-suffix-a4 { font-size: 40pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
+        + '.price-old-rp-a4 { font-size: 16pt !important; font-weight: 400 !important; color: black !important; margin-top: 4px; margin-right: 2px; line-height: 1; }'
+        + '.price-old-base-a4 { font-size: 60pt !important; font-weight: 700 !important; letter-spacing: -1px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.price-old-suffix-a4 { font-size: 34pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '.coret-diagonal-discount-a4 { position: relative; display: inline-flex; align-items: flex-start; }'
         + '.coret-diagonal-discount-a4::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 2.5px; background-color: #000000 !important; transform: rotate(-6deg); }'
         + '.price-promo-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
-        + '.price-promo-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: black !important; margin-top: 6px; margin-right: 2px; line-height: 1; }'
-        + '.price-promo-base-a4 { font-size: 75pt !important; font-weight: 700 !important; letter-spacing: -1.5px; line-height: 0.8; color: #dc2626 !important; }'
-        + '.price-promo-suffix-a4 { font-size: 44pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
+        + '.price-promo-rp-a4 { font-size: 19pt !important; font-weight: 400 !important; color: black !important; margin-top: 5px; margin-right: 2px; line-height: 1; }'
+        + '.price-promo-base-a4 { font-size: 70pt !important; font-weight: 700 !important; letter-spacing: -1.5px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.price-promo-suffix-a4 { font-size: 41pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -694,10 +695,10 @@ window.printA4DiscountPercent = function() {
                         </div>
 
                         <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                        <div style="text-align:center; padding-bottom: 5px; padding-top: 100px; line-height:0;">
                             <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                         </div>
-                        <div style="height: 70px;"></div>
+                        <div style="height: 20px;"></div>
                     </div>
                 </div>
             @endforeach
