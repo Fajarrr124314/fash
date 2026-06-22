@@ -79,7 +79,7 @@ new class extends Component
                 %
             </div>
             <div>
-                <h2 class="text-sm font-extrabold tracking-tight text-slate-800 leading-none">POP YKR</h2>
+                <h2 class="text-sm font-extrabold tracking-tight text-slate-800 leading-none">FASHION YKR POP</h2>
                 <span class="text-[9px] text-slate-400 font-bold uppercase tracking-wider">Dashboard</span>
             </div>
         </div>
@@ -115,7 +115,7 @@ new class extends Component
                     %
                 </div>
                 <div x-show="!sidebarCollapsed" x-transition.opacity>
-                    <h2 class="text-base font-extrabold tracking-tight text-slate-800">POP YKR</h2>
+                    <h2 class="text-base font-extrabold tracking-tight text-slate-800">FASHION YKR POP</h2>
                     <span class="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Promotion</span>
                 </div>
             </div>
@@ -160,7 +160,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Harga Tunggal</span>
+                            <span>A5 Non Promo</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a5-was-is-price')"
@@ -169,7 +169,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2v-12a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2zM9 15l6-6" />
                             </svg>
-                            <span>Harga Coret</span>
+                            <span>A5 Harga Coret</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a5-discount-percent')"
@@ -178,7 +178,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l6 6m0-6L9 15m12-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Diskon %</span>
+                            <span>A5 Diskon %</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a5-double-item')"
@@ -213,7 +213,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Harga Tunggal</span>
+                            <span>A4 Non Promo</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a4-was-is-price')"
@@ -222,7 +222,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2v-12a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2zM9 15l6-6" />
                             </svg>
-                            <span>Harga Coret</span>
+                            <span>A4 Harga Coret</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a4-discount-percent')"
@@ -231,7 +231,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l6 6m0-6L9 15m12-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Diskon %</span>
+                            <span>A4 Diskon %</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a4-double-item')"
@@ -266,7 +266,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Harga Tunggal</span>
+                            <span>A3 Non Promo</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a3-was-is-price')"
@@ -275,7 +275,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M6 20h12a2 2 0 002-2v-12a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2zM9 15l6-6" />
                             </svg>
-                            <span>Harga Coret</span>
+                            <span>A3 Harga Coret</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a3-discount-percent')"
@@ -284,7 +284,7 @@ new class extends Component
                             <svg class="h-5 w-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 9l6 6m0-6L9 15m12-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <span>Diskon %</span>
+                            <span>A3 Diskon %</span>
                         </button>
                         <button type="button" 
                                 wire:click="selectView('a3-double-item')"
