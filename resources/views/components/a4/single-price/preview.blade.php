@@ -196,6 +196,59 @@ new class extends Component
             margin-top: 2px;
         }
         
+        .pop-card-a4 .double-price-wrapper-a4 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            gap: 14px;
+        }
+        
+        .pop-card-a4 .double-price-row-a4 {
+            display: flex;
+            align-items: flex-start;
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            line-height: 0.85;
+        }
+        
+        .pop-card-a4 .double-price-rp-a4 {
+            font-size: 18pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            margin-top: 6px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+        
+        .pop-card-a4 .double-price-base-a4 {
+            font-size: 120pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -2px;
+            line-height: 0.8;
+        }
+        
+        .pop-card-a4 .double-price-suffix-a4 {
+            font-size: 82pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+        }
+        
+        .pop-card-a4 .double-price-sd-a4 {
+            font-size: 28pt !important;
+            font-weight: 400 !important;
+            color: #000000ff !important;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: 0.5px;
+        }
+        
         @media print {
             body, html {
                 margin: 0 !important;
@@ -321,13 +374,36 @@ new class extends Component
                            <!-- Price Area -->
                            <div class="price-area-a4">
                                @php
+                                   $isDouble = $activePreviewPop['additional_data']['is_double_price'] ?? false;
+                                   $showSd = $activePreviewPop['additional_data']['show_sd'] ?? false;
                                    $priceParts = $this->formatPriceStatic($activePreviewPop['primary_price']);
                                @endphp
-                               <div class="price-wrapper-a4">
-                                   <span class="price-rp-a4">Rp</span>
-                                   <span class="price-base-a4">{{ $priceParts['base'] }}</span>
-                                   <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
-                                </div>
+                               @if($isDouble && !empty($activePreviewPop['secondary_price']))
+                                   @php
+                                       $price2Parts = $this->formatPriceStatic($activePreviewPop['secondary_price']);
+                                   @endphp
+                                   <div class="double-price-wrapper-a4">
+                                       <div class="double-price-row-a4">
+                                           <span class="double-price-rp-a4">Rp</span>
+                                           <span class="double-price-base-a4">{{ $priceParts['base'] }}</span>
+                                           <span class="double-price-suffix-a4">{{ $priceParts['suffix'] }}</span>
+                                       </div>
+                                       @if($showSd)
+                                           <div class="double-price-sd-a4">S/D</div>
+                                       @endif
+                                       <div class="double-price-row-a4">
+                                           <span class="double-price-rp-a4">Rp</span>
+                                           <span class="double-price-base-a4">{{ $price2Parts['base'] }}</span>
+                                           <span class="double-price-suffix-a4">{{ $price2Parts['suffix'] }}</span>
+                                       </div>
+                                   </div>
+                               @else
+                                   <div class="price-wrapper-a4">
+                                       <span class="price-rp-a4">Rp</span>
+                                       <span class="price-base-a4">{{ $priceParts['base'] }}</span>
+                                       <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
+                                    </div>
+                               @endif
                            </div>
                         <!-- Footer Image -->
                         <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
@@ -386,6 +462,12 @@ window.printA4SinglePrice = function() {
         + '.price-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 8px; margin-right: 2px; line-height: 1; }'
         + '.price-base-a4 { font-size: 140pt !important; font-weight: 700 !important; letter-spacing: -2px; line-height: 0.8; }'
         + '.price-suffix-a4 { font-size: 96pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 2px; }'
+        + '.double-price-wrapper-a4 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 2px; margin-bottom: 2px; gap: 14px; }'
+        + '.double-price-row-a4 { display: flex; align-items: flex-start; color: #dc2626 !important; font-weight: 700 !important; line-height: 0.85; }'
+        + '.double-price-rp-a4 { font-size: 18pt !important; font-weight: 400 !important; color: #000000ff !important; margin-top: 6px; margin-right: 2px; line-height: 1; }'
+        + '.double-price-base-a4 { font-size: 120pt !important; font-weight: 700 !important; letter-spacing: -2px; line-height: 0.8; }'
+        + '.double-price-suffix-a4 { font-size: 82pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; }'
+        + '.double-price-sd-a4 { font-size: 28pt !important; font-weight: 400 !important; color: #000000ff !important; text-transform: uppercase; text-align: center; margin: 0; line-height: 1; letter-spacing: 0.5px; }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -421,13 +503,36 @@ window.printA4SinglePrice = function() {
                         <!-- Price Area -->
                         <div class="price-area-a4">
                             @php
+                                $isDouble = $pq['additional_data']['is_double_price'] ?? false;
+                                $showSd = $pq['additional_data']['show_sd'] ?? false;
                                 $priceParts = $this->formatPriceStatic($pq['primary_price']);
                             @endphp
-                            <div class="price-wrapper-a4">
-                                <span class="price-rp-a4">Rp</span>
-                                <span class="price-base-a4">{{ $priceParts['base'] }}</span>
-                                <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
-                            </div>
+                            @if($isDouble && !empty($pq['secondary_price']))
+                                @php
+                                    $price2Parts = $this->formatPriceStatic($pq['secondary_price']);
+                                @endphp
+                                <div class="double-price-wrapper-a4">
+                                    <div class="double-price-row-a4">
+                                        <span class="double-price-rp-a4">Rp</span>
+                                        <span class="double-price-base-a4">{{ $priceParts['base'] }}</span>
+                                        <span class="double-price-suffix-a4">{{ $priceParts['suffix'] }}</span>
+                                    </div>
+                                    @if($showSd)
+                                        <div class="double-price-sd-a4">S/D</div>
+                                    @endif
+                                    <div class="double-price-row-a4">
+                                        <span class="double-price-rp-a4">Rp</span>
+                                        <span class="double-price-base-a4">{{ $price2Parts['base'] }}</span>
+                                        <span class="double-price-suffix-a4">{{ $price2Parts['suffix'] }}</span>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="price-wrapper-a4">
+                                    <span class="price-rp-a4">Rp</span>
+                                    <span class="price-base-a4">{{ $priceParts['base'] }}</span>
+                                    <span class="price-suffix-a4">{{ $priceParts['suffix'] }}</span>
+                                </div>
+                            @endif
                         </div>
                         <!-- Footer Image -->
                         <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
