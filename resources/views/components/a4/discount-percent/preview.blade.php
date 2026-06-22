@@ -99,21 +99,6 @@ new class extends Component
         .pop-card-preview .font-normal {
             font-weight: 400 !important;
         }
-
-        .coret-diagonal-preview {
-            position: relative;
-            display: inline-block;
-        }
-        .coret-diagonal-preview::after {
-            content: "";
-            position: absolute;
-            left: -3%;
-            right: -3%;
-            top: 50%;
-            height: 2px;
-            background-color: #000000 !important;
-            transform: rotate(-6deg);
-        }
         
         .pop-card-a4 {
             width: 148mm;
@@ -161,13 +146,200 @@ new class extends Component
             text-align: center;
         }
         
-        .pop-card-a4 .price-area-a4 {
+        .pop-card-a4 .product-desc-a4 {
+            font-size: 21pt !important;
+            font-weight: 400 !important;
+            text-transform: uppercase;
+            color: #334155 !important;
+            line-height: 1.2;
+            margin-top: 2px;
+            text-align: center;
+        }
+        
+        /* Discount Layout Specific Styles */
+        .pop-card-a4 .discount-container-a4 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        
+        /* Single Discount Mode */
+        .pop-card-a4 .single-discount-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+        }
+        .pop-card-a4 .single-discount-base-a4 {
+            font-size: 240pt !important;
+            line-height: 0.8;
+            letter-spacing: -6px;
+        }
+        .pop-card-a4 .single-discount-percent-a4 {
+            font-size: 55pt !important;
+            margin-top: 15px;
+            margin-left: 2px;
+        }
+        
+        /* Double Discount Mode */
+        .pop-card-a4 .double-discount-wrapper-a4 {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            color: #dc2626 !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+        }
+        .pop-card-a4 .double-discount-first-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.8;
+        }
+        .pop-card-a4 .double-discount-first-base-a4 {
+            font-size: 195pt !important;
+            line-height: 0.8;
+            letter-spacing: -4px;
+        }
+        .pop-card-a4 .double-discount-first-percent-a4 {
+            font-size: 43pt !important;
+            margin-top: 11px;
+            margin-left: 1px;
+        }
+        .pop-card-a4 .double-discount-plus-a4 {
             display: flex;
             align-items: center;
+            align-self: flex-end;
+            height: 195pt;
+            margin-left: -10px;
+            margin-right: -10px;
+        }
+        .pop-card-a4 .double-discount-plus-text-a4 {
+            font-size: 43pt !important;
+            font-weight: 700 !important;
+            color: black !important;
+            line-height: 1;
+        }
+        .pop-card-a4 .double-discount-second-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.8;
+        }
+        .pop-card-a4 .double-discount-second-base-a4 {
+            font-size: 145pt !important;
+            line-height: 0.8;
+            letter-spacing: -3px;
+        }
+        .pop-card-a4 .double-discount-second-percent-a4 {
+            font-size: 32pt !important;
+            margin-top: 8px;
+            margin-left: 1px;
+        }
+        
+        /* Bottom Price Area styling */
+        .pop-card-a4 .bottom-prices-container-a4 {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            flex-grow: 1;
-            margin-top: 4px;
-            margin-bottom: 4px;
+            width: 100%;
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+        
+        .pop-card-a4 .starting-from-a4 {
+            font-size: 19pt !important;
+            font-weight: 400 !important;
+            color: black !important;
+            text-align: center;
+            margin-bottom: 6px;
+            line-height: 1;
+        }
+        
+        .pop-card-a4 .prices-row-a4 {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 16px;
+            width: 100%;
+        }
+        
+        /* Old Price */
+        .pop-card-a4 .price-old-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.85;
+        }
+        .pop-card-a4 .price-old-rp-a4 {
+            font-size: 18pt !important;
+            font-weight: 400 !important;
+            color: black !important;
+            margin-top: 5px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+        .pop-card-a4 .price-old-base-a4 {
+            font-size: 70pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -1px;
+            line-height: 0.8;
+            color: #dc2626 !important;
+        }
+        .pop-card-a4 .price-old-suffix-a4 {
+            font-size: 40pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+            color: #dc2626 !important;
+        }
+        
+        .pop-card-a4 .coret-diagonal-discount-a4 {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-start;
+        }
+        .pop-card-a4 .coret-diagonal-discount-a4::after {
+            content: "";
+            position: absolute;
+            left: -3%;
+            right: -3%;
+            top: 50%;
+            height: 2.5px;
+            background-color: #000000 !important;
+            transform: rotate(-6deg);
+        }
+        
+        /* Promo Price */
+        .pop-card-a4 .price-promo-wrapper-a4 {
+            display: flex;
+            align-items: flex-start;
+            line-height: 0.85;
+        }
+        .pop-card-a4 .price-promo-rp-a4 {
+            font-size: 20pt !important;
+            font-weight: 400 !important;
+            color: black !important;
+            margin-top: 6px;
+            margin-right: 2px;
+            line-height: 1;
+        }
+        .pop-card-a4 .price-promo-base-a4 {
+            font-size: 75pt !important;
+            font-weight: 700 !important;
+            letter-spacing: -1.5px;
+            line-height: 0.8;
+            color: #dc2626 !important;
+        }
+        .pop-card-a4 .price-promo-suffix-a4 {
+            font-size: 44pt !important;
+            font-weight: 700 !important;
+            line-height: 0.8;
+            margin-top: 1px;
+            color: #dc2626 !important;
         }
         
         @media print {
@@ -253,9 +425,8 @@ new class extends Component
                 min-height: 160px;
             }
         }
-        /* ---- End Mobile Responsive Preview ---- */
      </style>
-
+     
      <!-- Preview Modal Dialog Card -->
      <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-4xl w-full flex flex-col p-4 sm:p-6 space-y-4 sm:space-y-6 preview-modal-dialog"
           @click.away="open = false">
@@ -285,66 +456,78 @@ new class extends Component
                        </div>
 
                        <!-- Content Body -->
+                       @php
+                           $showDesc = !empty($activePreviewPop['additional_data']['show_description']);
+                           $showStart = !empty($activePreviewPop['show_starting_from']);
+                           $isDouble = !empty($activePreviewPop['additional_data']['is_double_discount']);
+                           
+                           $disc1 = $activePreviewPop['additional_data']['discount_percent'] ?? '50';
+                           $disc2 = $activePreviewPop['additional_data']['discount_percent_2'] ?? '';
+                           
+                           $promoPrice = $this->formatPriceStatic($activePreviewPop['primary_price'] ?? '');
+                           $oldPrice = $this->formatPriceStatic($activePreviewPop['secondary_price'] ?? '');
+                       @endphp
                        <div class="flex-grow flex flex-col justify-between py-4 px-5 leading-none">
-                           <!-- Brand Block -->
-                           <div>
-                               <div class="brand-name-a4">{{ $activePreviewPop['brand_name'] }}</div>
-                           </div>
+                            <!-- Brand Block -->
+                            <div>
+                                <div class="brand-name-a4">{{ $activePreviewPop['brand_name'] }}</div>
+                                @if($showDesc && !empty($activePreviewPop['product_desc']))
+                                    <div class="product-desc-a4">{{ $activePreviewPop['product_desc'] }}</div>
+                                @endif
+                            </div>
 
-                           <!-- Price Area -->
-                           <div class="price-area-a4">
-                               <div class="flex flex-col items-center w-full">
-                                   <div class="flex items-center text-[#dc2626] font-bold" style="line-height: 1;">
-                                       @if($activePreviewPop['additional_data']['has_sd'] ?? false)
-                                           <span class="text-black font-bold uppercase mr-1.5" style="font-size: 37.5pt;">S/D</span>
-                                       @endif
-                                       <span style="font-size: 210pt; line-height: 0.8; letter-spacing: -3px;">{{ $activePreviewPop['additional_data']['discount_percent'] ?? '50' }}</span>
-                                       <span style="font-size: 37.5pt; margin-left: 2px;">%</span>
-                                   </div>
-                                   
-                                   <!-- Bottom Comparative List -->
-                                   @php
-                                       $item1O = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_old_price'] ?? '');
-                                       $item1P = $this->formatPriceStatic($activePreviewPop['additional_data']['item1_price'] ?? '');
-                                       $item2O = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_old_price'] ?? '');
-                                       $item2P = $this->formatPriceStatic($activePreviewPop['additional_data']['item2_price'] ?? '');
-                                   @endphp
-                                   <div class="w-full border-t border-slate-300 mt-2 pt-2 text-black">
-                                       <div class="grid grid-cols-2 gap-2 text-center">
-                                           <div class="flex flex-col items-center">
-                                               <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                               <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
-                                                   <span>Rp</span>
-                                                   <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
-                                               </div>
-                                               <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
-                                                   <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
-                                                   <span>{{ $item1P['base'] }}</span>
-                                                   <span class="text-[13px] mt-0.5">{{ $item1P['suffix'] }}</span>
-                                               </div>
-                                           </div>
-                                           
-                                           <div class="flex flex-col items-center border-l border-slate-200">
-                                               <span class="text-[14px] font-bold text-slate-700 block mb-0.5">{{ strtoupper($activePreviewPop['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                               <div class="coret-diagonal-preview text-[14px] text-slate-500 font-semibold mb-0.5">
-                                                   <span>Rp</span>
-                                                   <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
-                                               </div>
-                                               <div style="color: #dc2626; font-weight: bold; display: flex; align-items: flex-start; font-size: 20px;">
-                                                   <span class="text-[12px] mt-0.5 mr-0.5">Rp</span>
-                                                   <span>{{ $item2P['base'] }}</span>
-                                                   <span class="text-[13px] mt-0.5">{{ $item2P['suffix'] }}</span>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                        <!-- Footer Image -->
-                        <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
-                            <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
-                        </div>
-                           <div class="h-4"></div>
+                            <!-- Discount Area -->
+                            <div class="discount-container-a4">
+                                @if(!$isDouble)
+                                    <!-- Single Discount Mode -->
+                                    <div class="single-discount-wrapper-a4">
+                                        <span class="single-discount-base-a4">{{ $disc1 }}</span>
+                                        <span class="single-discount-percent-a4">%</span>
+                                    </div>
+                                @else
+                                    <!-- Double Discount Mode -->
+                                    <div class="double-discount-wrapper-a4">
+                                        <div class="double-discount-first-a4">
+                                            <span class="double-discount-first-base-a4">{{ $disc1 }}</span>
+                                            <span class="double-discount-first-percent-a4">%</span>
+                                        </div>
+                                        <div class="double-discount-plus-a4">
+                                            <span class="double-discount-plus-text-a4">+</span>
+                                        </div>
+                                        <div class="double-discount-second-a4">
+                                            <span class="double-discount-second-base-a4">{{ $disc2 }}</span>
+                                            <span class="double-discount-second-percent-a4">%</span>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Bottom Price Area -->
+                            <div class="bottom-prices-container-a4">
+                                @if($showStart && !empty($activePreviewPop['secondary_price']))
+                                    <div class="starting-from-a4">Mulai Dari</div>
+                                @endif
+                                
+                                <div class="prices-row-a4">
+                                    <!-- Old Price (Left) -->
+                                    @if(!empty($activePreviewPop['secondary_price']))
+                                        <div class="price-old-wrapper-a4">
+                                            <span class="price-old-rp-a4">Rp</span><div class="coret-diagonal-discount-a4"><span class="price-old-base-a4">{{ $oldPrice['base'] }}</span><span class="price-old-suffix-a4">{{ $oldPrice['suffix'] }}</span></div>
+                                        </div>
+                                    @endif
+
+                                    <!-- Promo Price (Right) -->
+                                    <div class="price-promo-wrapper-a4">
+                                        <span class="price-promo-rp-a4">Rp</span><span class="price-promo-base-a4">{{ $promoPrice['base'] }}</span><span class="price-promo-suffix-a4">{{ $promoPrice['suffix'] }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer Image -->
+                            <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
+                                <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
+                            </div>
+                            <div style="height: 70px;"></div>
                        </div>
                   </div>
               @endif
@@ -391,8 +574,33 @@ window.printA4DiscountPercent = function() {
         + '.header-banner-a4 { background-color: #dc2626 !important; color: white !important; text-align: center; text-transform: uppercase; display: flex; align-items: center; justify-content: center; margin: 16px 16px 0 16px; height: 75px; box-sizing: border-box; padding: 0 10px; }'
         + '.header-banner-a4 span { font-size: 46pt !important; font-weight: 700 !important; line-height: 1; letter-spacing: -0.5px; }'
         + '.brand-name-a4 { font-size: 46pt !important; font-weight: 700 !important; text-transform: uppercase; color: black !important; line-height: 1; margin-top: 12px; letter-spacing: -0.5px; text-align: center; }'
-        + '.coret-diagonal-preview { position: relative; display: inline-block; }'
-        + '.coret-diagonal-preview::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 2px; background-color: #000000 !important; transform: rotate(-6deg); }'
+        + '.product-desc-a4 { font-size: 21pt !important; font-weight: 400 !important; text-transform: uppercase; color: #334155 !important; line-height: 1.2; margin-top: 2px; text-align: center; }'
+        + '.discount-container-a4 { display: flex; justify-content: center; align-items: center; flex-grow: 1; margin-top: 8px; margin-bottom: 8px; width: 100%; }'
+        + '.single-discount-wrapper-a4 { display: flex; align-items: flex-start; color: #dc2626 !important; font-weight: 700 !important; line-height: 0.8; }'
+        + '.single-discount-base-a4 { font-size: 240pt !important; line-height: 0.8; letter-spacing: -6px; }'
+        + '.single-discount-percent-a4 { font-size: 55pt !important; margin-top: 15px; margin-left: 2px; }'
+        + '.double-discount-wrapper-a4 { display: flex; align-items: flex-end; justify-content: center; color: #dc2626 !important; font-weight: 700 !important; line-height: 0.8; }'
+        + '.double-discount-first-a4 { display: flex; align-items: flex-start; line-height: 0.8; }'
+        + '.double-discount-first-base-a4 { font-size: 195pt !important; line-height: 0.8; letter-spacing: -4px; }'
+        + '.double-discount-first-percent-a4 { font-size: 43pt !important; margin-top: 11px; margin-left: 1px; }'
+        + '.double-discount-plus-a4 { display: flex; align-items: center; align-self: flex-end; height: 195pt; margin-left: -10px; margin-right: -10px; }'
+        + '.double-discount-plus-text-a4 { font-size: 43pt !important; font-weight: 700 !important; color: black !important; line-height: 1; }'
+        + '.double-discount-second-a4 { display: flex; align-items: flex-start; line-height: 0.8; }'
+        + '.double-discount-second-base-a4 { font-size: 145pt !important; line-height: 0.8; letter-spacing: -3px; }'
+        + '.double-discount-second-percent-a4 { font-size: 32pt !important; margin-top: 8px; margin-left: 1px; }'
+        + '.bottom-prices-container-a4 { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; margin-top: 6px; margin-bottom: 6px; }'
+        + '.starting-from-a4 { font-size: 19pt !important; font-weight: 400 !important; color: black !important; text-align: center; margin-bottom: 6px; line-height: 1; }'
+        + '.prices-row-a4 { display: flex; align-items: flex-end; justify-content: center; gap: 16px; width: 100%; }'
+        + '.price-old-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
+        + '.price-old-rp-a4 { font-size: 18pt !important; font-weight: 400 !important; color: black !important; margin-top: 5px; margin-right: 2px; line-height: 1; }'
+        + '.price-old-base-a4 { font-size: 70pt !important; font-weight: 700 !important; letter-spacing: -1px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.price-old-suffix-a4 { font-size: 40pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
+        + '.coret-diagonal-discount-a4 { position: relative; display: inline-flex; align-items: flex-start; }'
+        + '.coret-diagonal-discount-a4::after { content: ""; position: absolute; left: -3%; right: -3%; top: 50%; height: 2.5px; background-color: #000000 !important; transform: rotate(-6deg); }'
+        + '.price-promo-wrapper-a4 { display: flex; align-items: flex-start; line-height: 0.85; }'
+        + '.price-promo-rp-a4 { font-size: 20pt !important; font-weight: 400 !important; color: black !important; margin-top: 6px; margin-right: 2px; line-height: 1; }'
+        + '.price-promo-base-a4 { font-size: 75pt !important; font-weight: 700 !important; letter-spacing: -1.5px; line-height: 0.8; color: #dc2626 !important; }'
+        + '.price-promo-suffix-a4 { font-size: 44pt !important; font-weight: 700 !important; line-height: 0.8; margin-top: 1px; color: #dc2626 !important; }'
         + '</style>'
         + '</head><body>' + html + '</body></html>'
     );
@@ -418,66 +626,78 @@ window.printA4DiscountPercent = function() {
                     </div>
 
                     <!-- Content Body -->
+                    @php
+                        $pqShowDesc = !empty($pq['additional_data']['show_description']);
+                        $pqShowStart = !empty($pq['show_starting_from']);
+                        $pqIsDouble = !empty($pq['additional_data']['is_double_discount']);
+                        
+                        $pqDisc1 = $pq['additional_data']['discount_percent'] ?? '50';
+                        $pqDisc2 = $pq['additional_data']['discount_percent_2'] ?? '';
+                        
+                        $pqPromoPrice = $this->formatPriceStatic($pq['primary_price'] ?? '');
+                        $pqOldPrice = $this->formatPriceStatic($pq['secondary_price'] ?? '');
+                    @endphp
                     <div style="flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 16px 20px 16px 20px; line-height: none;">
                         <!-- Brand Block -->
                         <div>
                             <div class="brand-name-a4" style="margin-top: 12px;">{{ $pq['brand_name'] }}</div>
+                            @if($pqShowDesc && !empty($pq['product_desc']))
+                                <div class="product-desc-a4">{{ $pq['product_desc'] }}</div>
+                            @endif
                         </div>
 
-                        <!-- Price Area -->
-                        <div class="price-area-a4">
-                            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
-                                <div style="display: flex; align-items: center; color: #dc2626; font-weight: 700; line-height: 1;">
-                                    @if($pq['additional_data']['has_sd'] ?? false)
-                                        <span style="color: black; font-weight: 700; text-transform: uppercase; margin-right: 6px; font-size: 37.5pt;">S/D</span>
-                                    @endif
-                                    <span style="font-size: 210pt; line-height: 0.8; letter-spacing: -3px;">{{ $pq['additional_data']['discount_percent'] ?? '50' }}</span>
-                                    <span style="font-size: 37.5pt; margin-left: 2px;">%</span>
+                        <!-- Discount Area -->
+                        <div class="discount-container-a4">
+                            @if(!$pqIsDouble)
+                                <!-- Single Discount Mode -->
+                                <div class="single-discount-wrapper-a4">
+                                    <span class="single-discount-base-a4">{{ $pqDisc1 }}</span>
+                                    <span class="single-discount-percent-a4">%</span>
                                 </div>
-                                
-                                <!-- Bottom Comparative List -->
-                                @php
-                                    $item1O = $this->formatPriceStatic($pq['additional_data']['item1_old_price'] ?? '');
-                                    $item1P = $this->formatPriceStatic($pq['additional_data']['item1_price'] ?? '');
-                                    $item2O = $this->formatPriceStatic($pq['additional_data']['item2_old_price'] ?? '');
-                                    $item2P = $this->formatPriceStatic($pq['additional_data']['item2_price'] ?? '');
-                                @endphp
-                                <div style="width: 100%; border-top: 1px solid #cbd5e1; mt: 8px; padding-top: 8px; color: black;">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: center;">
-                                        <div style="display: flex; flex-direction: column; items: center;">
-                                            <span style="font-size: 14px; font-weight: 700; color: #334155; display: block; margin-bottom: 2px;">{{ strtoupper($pq['additional_data']['item1_name'] ?? 'LENGAN PENDEK') }}</span>
-                                            <div class="coret-diagonal-preview" style="font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 2px;">
-                                                <span>Rp</span>
-                                                <span>{{ $item1O['base'] . $item1O['suffix'] }}</span>
-                                            </div>
-                                            <div style="color: #dc2626; font-weight: 700; display: flex; align-items: flex-start; font-size: 20px;">
-                                                <span style="font-size: 12px; margin-top: 2px; margin-right: 2px;">Rp</span>
-                                                <span>{{ $item1P['base'] }}</span>
-                                                <span style="font-size: 13px; margin-top: 2px;">{{ $item1P['suffix'] }}</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div style="display: flex; flex-direction: column; items: center; border-left: 1px solid #cbd5e1;">
-                                            <span style="font-size: 14px; font-weight: 700; color: #334155; display: block; margin-bottom: 2px;">{{ strtoupper($pq['additional_data']['item2_name'] ?? 'LENGAN PANJANG') }}</span>
-                                            <div class="coret-diagonal-preview" style="font-size: 14px; color: #64748b; font-weight: 600; margin-bottom: 2px;">
-                                                <span>Rp</span>
-                                                <span>{{ $item2O['base'] . $item2O['suffix'] }}</span>
-                                            </div>
-                                            <div style="color: #dc2626; font-weight: 700; display: flex; align-items: flex-start; font-size: 20px;">
-                                                <span style="font-size: 12px; margin-top: 2px; margin-right: 2px;">Rp</span>
-                                                <span>{{ $item2P['base'] }}</span>
-                                                <span style="font-size: 13px; margin-top: 2px;">{{ $item2P['suffix'] }}</span>
-                                            </div>
-                                        </div>
+                            @else
+                                <!-- Double Discount Mode -->
+                                <div class="double-discount-wrapper-a4">
+                                    <div class="double-discount-first-a4">
+                                        <span class="double-discount-first-base-a4">{{ $pqDisc1 }}</span>
+                                        <span class="double-discount-first-percent-a4">%</span>
                                     </div>
+                                    <div class="double-discount-plus-a4">
+                                        <span class="double-discount-plus-text-a4">+</span>
+                                    </div>
+                                    <div class="double-discount-second-a4">
+                                        <span class="double-discount-second-base-a4">{{ $pqDisc2 }}</span>
+                                        <span class="double-discount-second-percent-a4">%</span>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Bottom Price Area -->
+                        <div class="bottom-prices-container-a4">
+                            @if($pqShowStart && !empty($pq['secondary_price']))
+                                <div class="starting-from-a4">Mulai Dari</div>
+                            @endif
+                            
+                            <div class="prices-row-a4">
+                                <!-- Old Price (Left) -->
+                                @if(!empty($pq['secondary_price']))
+                                    <div class="price-old-wrapper-a4">
+                                        <span class="price-old-rp-a4">Rp</span><div class="coret-diagonal-discount-a4"><span class="price-old-base-a4">{{ $pqOldPrice['base'] }}</span><span class="price-old-suffix-a4">{{ $pqOldPrice['suffix'] }}</span></div>
+                                    </div>
+                                @endif
+
+                                <!-- Promo Price (Right) -->
+                                <div class="price-promo-wrapper-a4">
+                                    <span class="price-promo-rp-a4">Rp</span><span class="price-promo-base-a4">{{ $pqPromoPrice['base'] }}</span><span class="price-promo-suffix-a4">{{ $pqPromoPrice['suffix'] }}</span>
                                 </div>
                             </div>
                         </div>
+
                         <!-- Footer Image -->
                         <div style="text-align:center; padding-bottom: 10px; padding-top: 4px; line-height:0;">
                             <img src="{{ asset('images/Picture2.bmp') }}" alt="Footer Logo" style="max-height: 18px; width: auto; display: inline-block; object-fit: contain;">
                         </div>
-                        <div style="height: 16px;"></div>
+                        <div style="height: 70px;"></div>
                     </div>
                 </div>
             @endforeach
